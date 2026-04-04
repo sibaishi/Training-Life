@@ -192,16 +192,22 @@ const handleSave = () => {
     navigate(`/plan/${newPlanId}`);
   };
 
-  const handleExit = () => {
-    if (hasUnsavedChanges) {
-      const confirmMessage = '有未保存的修改，是否退出？\n\n点击"确定"退出（不保存）\n点击"取消"留在编辑页';
-      if (!window.confirm(confirmMessage)) {
-        return;
-      }
+const handleExit = () => {
+  if (hasUnsavedChanges) {
+    const confirmMessage = '有未保存的修改，是否退出？\n\n点击"确定"退出（不保存）\n点击"取消"留在编辑页';
+    if (!window.confirm(confirmMessage)) {
+      return;
     }
-    setIsEditing(false);
+  }
+  setIsEditing(false);
+  
+  // ✨ 如果是编辑现有计划，返回该计划的查看页
+  if (planId) {
+    navigate(`/plan/${planId}`);
+  } else {
     navigate('/plan?tab=all');
-  };
+  }
+};
 
   return (
     <div className={editorStyles.page}>
