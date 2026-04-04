@@ -334,24 +334,6 @@ export default function Grocery() {
             })}
           </div>
         )}
-
-        {/* 底部摘要 */}
-        {groceryItems.length > 0 && (
-          <div className={styles.summary}>
-            <div className={styles.summaryRow}>
-              <span>本周采购完成率</span>
-              <span className={styles.summaryValue}>{completionRate}%</span>
-            </div>
-            <div className={styles.summaryRow}>
-              <span>本周费用</span>
-              <span className={styles.summaryValue}>¥{weekCost.toFixed(1)}</span>
-            </div>
-            <div className={styles.summaryRow}>
-              <span>本月费用</span>
-              <span className={styles.summaryValue}>¥{monthCost.toFixed(1)}</span>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
