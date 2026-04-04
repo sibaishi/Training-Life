@@ -2,8 +2,80 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useAppState } from '../../contexts/AppContext';
 import { ThemeMode } from '../../types';
 import { getDefaultState, normalizeState } from '../../utils/storage';
-import { getTodayString } from '../../utils/date';
 import styles from './Settings.module.css';
+
+function MaleAvatar() {
+  return (
+    <svg viewBox="0 0 120 120" className={styles.avatarSvg} aria-hidden="true">
+      <defs>
+        <linearGradient id="maleGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="currentColor" stopOpacity="0.95" />
+          <stop offset="100%" stopColor="currentColor" stopOpacity="0.65" />
+        </linearGradient>
+      </defs>
+      <circle cx="60" cy="42" r="18" fill="url(#maleGrad)" />
+      <path
+        d="M29 100c2-18 14-31 31-31s29 13 31 31"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="12"
+        strokeLinecap="round"
+        strokeOpacity="0.7"
+      />
+      <path
+        d="M39 31c4-12 16-19 30-19 10 0 20 4 27 12"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="10"
+        strokeLinecap="round"
+        strokeOpacity="0.35"
+      />
+    </svg>
+  );
+}
+
+function FemaleAvatar() {
+  return (
+    <svg viewBox="0 0 120 120" className={styles.avatarSvg} aria-hidden="true">
+      <defs>
+        <linearGradient id="femaleGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="currentColor" stopOpacity="0.95" />
+          <stop offset="100%" stopColor="currentColor" stopOpacity="0.62" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M28 44c0-20 14-32 32-32s32 12 32 32c0 18-8 28-10 39H38c-2-11-10-21-10-39z"
+        fill="currentColor"
+        fillOpacity="0.22"
+      />
+      <circle cx="60" cy="42" r="17" fill="url(#femaleGrad)" />
+      <path
+        d="M33 100c4-16 14-28 27-28s23 12 27 28"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="12"
+        strokeLinecap="round"
+        strokeOpacity="0.68"
+      />
+    </svg>
+  );
+}
+
+function EmptyAvatar() {
+  return (
+    <svg viewBox="0 0 120 120" className={styles.avatarSvg} aria-hidden="true">
+      <circle cx="60" cy="42" r="18" fill="currentColor" fillOpacity="0.2" />
+      <path
+        d="M32 98c4-16 15-28 28-28s24 12 28 28"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="12"
+        strokeLinecap="round"
+        strokeOpacity="0.18"
+      />
+    </svg>
+  );
+}
 
 export default function Settings() {
   const { state, setState } = useAppState();
@@ -18,12 +90,9 @@ export default function Settings() {
 
   const genderLocked = profile.genderLocked === true;
   const heightLocked = profile.heightLocked === true;
-  const baselineLocked = profile.baselineSetManually === true;  // ← 修改这里
+  const baselineLocked = profile.baselineSetManually === true;
 
-  // 身高草稿：避免你输入一半就触发逻辑
   const [heightDraft, setHeightDraft] = useState(profile.height !== undefined ? String(profile.height) : '');
-
-  // 基线草稿：通过按钮"保存并锁定"
   const [baselineWeightDraft, setBaselineWeightDraft] = useState(
     profile.baselineWeight !== undefined ? String(profile.baselineWeight) : ''
   );
@@ -31,7 +100,6 @@ export default function Settings() {
     profile.baselineBodyFat !== undefined ? String(profile.baselineBodyFat) : ''
   );
 
-  // 如果导入/清空后 profile 变化,同步草稿
   useEffect(() => {
     setHeightDraft(profile.height !== undefined ? String(profile.height) : '');
   }, [profile.height]);
@@ -41,11 +109,9 @@ export default function Settings() {
     setBaselineBodyFatDraft(profile.baselineBodyFat !== undefined ? String(profile.baselineBodyFat) : '');
   }, [profile.baselineWeight, profile.baselineBodyFat]);
 
-  // 性别：设置一次后立刻锁死
   const handleSetGenderOnce = (value: string) => {
     if (genderLocked) return;
 
-    // 允许"未设置"保持空（不锁）
     if (!value) {
       setState(prev => ({ ...prev, profile: { ...prev.profile, gender: undefined } }));
       return;
@@ -65,7 +131,6 @@ export default function Settings() {
     }));
   };
 
-  // 身高：首次填写后锁死（在失焦时确认锁定）
   const handleHeightBlur = () => {
     if (heightLocked) return;
 
@@ -91,7 +156,6 @@ export default function Settings() {
     }));
   };
 
-  // 基线：首次保存并锁定（按钮触发）
   const handleSaveAndLockBaseline = () => {
     if (baselineLocked) return;
 
@@ -111,7 +175,7 @@ export default function Settings() {
       return;
     }
 
-    const today = new Date().toISOString();  // ← 修改这里
+    const today = new Date().toISOString();
 
     setState(prev => ({
       ...prev,
@@ -119,7 +183,7 @@ export default function Settings() {
         ...prev.profile,
         baselineWeight: w,
         baselineBodyFat: bf,
-        baselineSetManually: true,  // ← 修改这里
+        baselineSetManually: true,
         baselineUpdatedAt: prev.profile.baselineUpdatedAt ?? today,
       },
     }));
@@ -127,12 +191,10 @@ export default function Settings() {
     alert('基线已保存并锁定。之后只能在切换计划生效时自动更新。');
   };
 
-  // 切换主题
   const handleThemeChange = (theme: ThemeMode) => {
     setState(prev => ({ ...prev, theme }));
   };
 
-  // 导出数据
   const handleExport = (type: 'full' | 'plans' | 'records') => {
     let data: any;
 
@@ -174,7 +236,6 @@ export default function Settings() {
     alert('导出成功');
   };
 
-  // 导入数据
   const handleImport = (type: 'full' | 'plans') => {
     const input = fileInputRef.current;
     if (!input) return;
@@ -191,7 +252,6 @@ export default function Settings() {
           if (type === 'full') {
             const confirmed = window.confirm('完整导入会覆盖当前所有数据，确定继续吗？');
             if (!confirmed) return;
-
             setState(normalizeState(data));
           } else {
             const confirmed = window.confirm('导入计划会添加到现有计划中，确定继续吗？');
@@ -219,7 +279,6 @@ export default function Settings() {
     setShowImportModal(false);
   };
 
-  // 清理数据
   const handleClean = (type: 'all' | 'records' | 'checkins' | 'planRecords' | 'groceries') => {
     const messages: Record<string, string> = {
       all: '确定要清空全部数据吗？此操作不可恢复！',
@@ -255,12 +314,31 @@ export default function Settings() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <h1 className={styles.pageTitle}>我的</h1>
-      </div>
-
       <div className={styles.content}>
-        {/* 基础信息 */}
+        <div className={styles.profileHero}>
+          <div className={styles.avatarShell}>
+            <div className={styles.avatar}>
+              {profile.gender === 'male' ? (
+                <MaleAvatar />
+              ) : profile.gender === 'female' ? (
+                <FemaleAvatar />
+              ) : (
+                <EmptyAvatar />
+              )}
+            </div>
+          </div>
+          <div className={styles.profileMeta}>
+            <div className={styles.profileTitle}>个人资料</div>
+            <div className={styles.profileSubtitle}>
+              {profile.gender === 'male'
+                ? '男性档案'
+                : profile.gender === 'female'
+                ? '女性档案'
+                : '尚未设置性别'}
+            </div>
+          </div>
+        </div>
+
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>基础信息</h2>
 
@@ -323,7 +401,7 @@ export default function Settings() {
                 保存并锁定基线
               </button>
             ) : (
-              <div style={{ marginTop: 12, fontSize: 12, color: 'var(--color-text-tertiary)', lineHeight: 1.6 }}>
+              <div className={styles.lockedHint}>
                 基线已锁定，无法手动修改。请在「打卡」中填写最新体重/体脂；当你切换计划并生效时，系统会自动用最新打卡数据更新基线。
                 {profile.baselineUpdatedAt ? `（最后更新时间：${profile.baselineUpdatedAt}）` : ''}
               </div>
@@ -337,7 +415,6 @@ export default function Settings() {
           </div>
         </div>
 
-        {/* 主题设置 */}
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>主题设置</h2>
 
@@ -362,7 +439,6 @@ export default function Settings() {
           </div>
         </div>
 
-        {/* 数据管理 */}
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>数据管理</h2>
 
@@ -386,18 +462,17 @@ export default function Settings() {
           </div>
         </div>
 
-        {/* 关于 */}
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>关于</h2>
 
           <div className={styles.card}>
             <div className={styles.aboutRow}>
               <span>版本</span>
-              <span>v1.0.0</span>
+              <span>v2.0.0</span>
             </div>
             <div className={styles.aboutRow}>
               <span>作者</span>
-              <span>Sue × ChatGPT</span>
+              <span>Sue × ChatGPT × Claude</span>
             </div>
             <div className={styles.aboutDesc}>
               这是一个为个人长期使用而设计的训练与生活管理系统，用于管理训练计划、饮食计划、作息安排、每日打卡与采购记录。系统强调清晰、稳定、可自定义，目标是让计划不仅能制定出来，也能被真正执行下去。
@@ -405,7 +480,6 @@ export default function Settings() {
           </div>
         </div>
 
-        {/* 导出弹窗 */}
         {showExportModal && (
           <div className={styles.modalOverlay} onClick={() => setShowExportModal(false)}>
             <div className={styles.modal} onClick={e => e.stopPropagation()}>
@@ -436,7 +510,6 @@ export default function Settings() {
           </div>
         )}
 
-        {/* 导入弹窗 */}
         {showImportModal && (
           <div className={styles.modalOverlay} onClick={() => setShowImportModal(false)}>
             <div className={styles.modal} onClick={e => e.stopPropagation()}>
@@ -462,7 +535,6 @@ export default function Settings() {
           </div>
         )}
 
-        {/* 清理弹窗 */}
         {showCleanModal && (
           <div className={styles.modalOverlay} onClick={() => setShowCleanModal(false)}>
             <div className={styles.modal} onClick={e => e.stopPropagation()}>
@@ -503,7 +575,6 @@ export default function Settings() {
           </div>
         )}
 
-        {/* 基线历史弹窗 */}
         {showHistoryModal && (
           <div className={styles.modalOverlay} onClick={() => setShowHistoryModal(false)}>
             <div className={styles.modal} onClick={e => e.stopPropagation()}>
