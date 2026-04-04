@@ -139,7 +139,6 @@ export interface PlanMealRecord {
 }
 
 export interface DailyPlanRecord {
-  planId: string;
   date: DateString;
   training: {
     primary: Record<string, PlanExerciseRecord>;
@@ -256,10 +255,20 @@ export interface AppState {
   lastPlanSwitchDate: DateString | null;
   plans: Plan[];
   
-  /** 打卡记录，key 格式：`${date}`，例如 "2024-01-15" */
+  /** 每日计划映射：记录每一天使用的是哪个计划 
+   * key: 日期（YYYY-MM-DD）
+   * value: 计划ID
+   */
+  dailyPlanMap: Record<string, string>;
+  
+  /** 打卡记录
+   * key: 日期（YYYY-MM-DD）
+   */
   checkins: Record<string, DailyCheckin>;
   
-  /** 计划执行记录，key 格式：`${planId}_${date}`，例如 "plan-123_2024-01-15" */
+  /** 计划执行记录
+   * key: 日期（YYYY-MM-DD）
+   */
   planRecords: Record<string, DailyPlanRecord>;
   
   customChecklist: CustomChecklistItem[];
