@@ -384,21 +384,21 @@
 /* 折线样式 */
 .lineWeight {
   stroke: #3b82f6;
-  stroke-width: 1.2;
+  stroke-width: 0.6;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .lineBodyFat {
   stroke: #f59e0b;
-  stroke-width: 1.2;
+  stroke-width: 0.6;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .lineSleep {
   stroke: #8b5cf6;
-  stroke-width: 1.2;
+  stroke-width: 0.6;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
