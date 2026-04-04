@@ -9,10 +9,10 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border-bottom: 1px solid var(--color-border);
+  background: var(--glass-bg-strong);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border-bottom: 1px solid var(--glass-border);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -46,6 +46,7 @@
   color: white;
   background: var(--color-accent);
   border-radius: var(--radius-full);
+  box-shadow: var(--shadow-accent);
 }
 
 .pendingBadge {
@@ -76,7 +77,7 @@
   background: var(--color-divider);
 }
 
-/* ==================== 菜单 ==================== */
+/* ==================== 菜单 - 毛玻璃 ==================== */
 .menuOverlay {
   position: fixed;
   top: 0;
@@ -84,6 +85,8 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   z-index: 100;
 }
 
@@ -92,11 +95,13 @@
   top: 56px;
   right: var(--spacing-lg);
   min-width: 180px;
-  background: var(--color-surface);
-  border-radius: var(--radius-md);
+  background: var(--glass-bg-strong);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xl);
   overflow: hidden;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--glass-border);
 }
 
 .menuItem {
@@ -117,12 +122,13 @@
 }
 
 .menuItem:active {
-  background: var(--color-surface-secondary);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .menuItem:disabled {
   color: var(--color-text-tertiary);
   cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .menuItemDanger {
@@ -135,25 +141,54 @@
   padding-bottom: var(--spacing-lg);
 }
 
-/* ==================== 通用卡片 ==================== */
+/* ==================== 通用卡片 - 毛玻璃 ==================== */
 .card {
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
+  position: relative;
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
+  overflow: hidden;
+  
+  /* 毛玻璃效果 */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border);
+}
+
+/* 噪点纹理层 */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+.card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .emptyCard {
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
+  position: relative;
   padding: var(--spacing-xl);
   margin-bottom: var(--spacing-md);
   text-align: center;
   color: var(--color-text-tertiary);
   font-size: var(--font-sm);
-  border: 1px solid var(--color-border);
+  overflow: hidden;
+  
+  /* 毛玻璃效果 */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
 }
 
 /* ==================== 计划名称 ==================== */
@@ -310,7 +345,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ==================== 日期标签切换 ==================== */
+/* ==================== 日期标签切换 - 优化 ==================== */
 .dayTabs {
   display: flex;
   gap: var(--spacing-sm);
@@ -330,8 +365,10 @@
   font-size: var(--font-sm);
   font-weight: var(--weight-medium);
   color: var(--color-text-secondary);
-  background: var(--color-surface);
-  border: 1.5px solid var(--color-border);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border: 1.5px solid var(--glass-border);
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: all var(--transition-normal);
@@ -343,9 +380,9 @@
 
 .dayTabActive {
   color: white;
-  background: var(--color-accent);
+  background: var(--gradient-accent);
   border-color: var(--color-accent);
-  box-shadow: 0 2px 8px rgba(52, 199, 89, 0.25);
+  box-shadow: var(--shadow-accent);
 }
 
 /* ==================== 空状态 ==================== */
@@ -370,20 +407,27 @@
 }
 
 .backButton {
+  margin-top: var(--spacing-md);
   padding: var(--spacing-md) var(--spacing-xl);
   font-size: var(--font-base);
   font-weight: var(--weight-semibold);
-  color: var(--color-accent);
-  background: var(--color-accent-soft);
+  color: white;
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
+  
+  /* 动态渐变 */
+  background: var(--gradient-accent-animated);
+  background-size: 400% 400%;
+  animation: gradientWave 8s ease-in-out infinite;
+  box-shadow: var(--shadow-accent);
+  
   transition: all var(--transition-fast);
 }
 
 .backButton:active {
   transform: scale(0.97);
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .emptyHint {
