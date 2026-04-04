@@ -1,0 +1,557 @@
+.page {
+  min-height: 100%;
+  background: var(--color-bg);
+}
+
+.header {
+  background: var(--color-accent);
+  padding: var(--spacing-lg);
+  color: white;
+}
+
+.dateNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+}
+
+.dateNavBtn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: var(--weight-bold);
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+}
+
+.dateNavBtn:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.dateCenter {
+  text-align: center;
+  cursor: pointer;
+}
+
+.dateMain {
+  font-size: var(--font-xl);
+  font-weight: var(--weight-bold);
+  margin-bottom: 2px;
+}
+
+.dateSub {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-base);
+  opacity: 0.9;
+}
+
+.todayBadge {
+  padding: 2px var(--spacing-sm);
+  font-size: var(--font-xs);
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-full);
+}
+
+.dayTypes {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.dayTypeBadge {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-xs);
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+}
+
+.backToTodayBtn {
+  display: block;
+  width: 100%;
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.backToTodayBtn:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.content {
+  padding: var(--spacing-lg);
+  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + var(--spacing-3xl));
+}
+
+/* 进度卡 */
+.progressCard {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.progressLabel {
+  font-size: var(--font-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.progressValue {
+  font-size: var(--font-xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-accent);
+}
+
+.progressBar {
+  height: 8px;
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: var(--radius-full);
+  transition: width 0.3s;
+}
+
+/* 通用卡片 */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.cardTitle {
+  font-size: var(--font-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+/* 饮水卡 */
+.waterStats {
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-accent);
+}
+
+.waterProgressBar {
+  height: 8px;
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--spacing-md);
+}
+
+.waterProgressFill {
+  height: 100%;
+  background: var(--color-info);
+  border-radius: var(--radius-full);
+  transition: width 0.3s;
+}
+
+.waterActions {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.waterQuickBtn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-info);
+  background: rgba(59, 130, 246, 0.1);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.waterQuickBtn:active {
+  opacity: 0.7;
+}
+
+.waterCustomBtn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.waterInputRow {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.waterInput {
+  flex: 1;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-base);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.waterInput:focus {
+  border-color: var(--color-accent);
+}
+
+.waterAddBtn {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: var(--font-base);
+  font-weight: var(--weight-medium);
+  color: white;
+  background: var(--color-info);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+/* 固定项 */
+.fixedItemsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.fixedItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+}
+
+.fixedItemLabel {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
+
+.fixedItemInput {
+  width: 80px;
+  padding: var(--spacing-sm);
+  font-size: var(--font-lg);
+  font-weight: var(--weight-semibold);
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.fixedItemInput:focus {
+  border-color: var(--color-accent);
+}
+
+.sleepRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+}
+
+.sleepInput {
+  width: 100px;
+  padding: var(--spacing-md);
+  font-size: var(--font-lg);
+  font-weight: var(--weight-semibold);
+  text-align: center;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.sleepInput:focus {
+  border-color: var(--color-accent);
+}
+
+.sleepTarget {
+  font-size: var(--font-sm);
+  color: var(--color-text-tertiary);
+}
+
+.sleepProgressBar {
+  height: 6px;
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: var(--spacing-md);
+}
+
+.sleepProgressFill {
+  height: 100%;
+  background: var(--color-success);
+  border-radius: var(--radius-full);
+  transition: width 0.3s;
+}
+
+/* 执行清单 */
+.addCustomBtn {
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-accent);
+  background: var(--color-accent-light);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.emptyHint {
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-sm);
+}
+
+.checklistItems {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.checklistItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.checklistItem:active {
+  transform: scale(0.98);
+}
+
+.checklistItemDone {
+  opacity: 0.6;
+}
+
+.checklistItemDone .checklistName {
+  text-decoration: line-through;
+}
+
+.checklistCheck {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-base);
+  color: var(--color-text-tertiary);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+.checklistItemDone .checklistCheck {
+  color: white;
+  background: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.checklistContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.checklistName {
+  font-size: var(--font-base);
+  color: var(--color-text-primary);
+}
+
+.checklistTime {
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+}
+
+.customBadge {
+  padding: 2px var(--spacing-sm);
+  font-size: var(--font-xs);
+  color: var(--color-accent);
+  background: var(--color-accent-light);
+  border-radius: var(--radius-full);
+}
+
+/* 弹窗 */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--spacing-lg);
+}
+
+.modal {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 400px;
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modalTitle {
+  font-size: var(--font-lg);
+  font-weight: var(--weight-semibold);
+}
+
+.modalCloseBtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-base);
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+}
+
+.modalBody {
+  padding: var(--spacing-lg);
+}
+
+.formField {
+  margin-bottom: var(--spacing-lg);
+}
+
+.formField:last-child {
+  margin-bottom: 0;
+}
+
+.formLabel {
+  display: block;
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.formInput {
+  width: 100%;
+  padding: var(--spacing-md);
+  font-size: var(--font-base);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.formInput:focus {
+  border-color: var(--color-accent);
+}
+
+.daySelector {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.dayBtn {
+  flex: 1;
+  padding: var(--spacing-sm);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.dayBtnActive {
+  color: white;
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.modalFooter {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+}
+
+.modalCancelBtn {
+  flex: 1;
+  padding: var(--spacing-md);
+  font-size: var(--font-base);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
+  background: var(--color-bg);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.modalConfirmBtn {
+  flex: 1;
+  padding: var(--spacing-md);
+  font-size: var(--font-base);
+  font-weight: var(--weight-medium);
+  color: white;
+  background: var(--color-accent);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}

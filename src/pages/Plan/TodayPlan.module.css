@@ -1,0 +1,565 @@
+.page {
+  min-height: 100%;
+  background: var(--color-bg);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.backBtn {
+  padding: var(--spacing-sm);
+  font-size: var(--font-base);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.headerTitle {
+  font-size: var(--font-lg);
+  font-weight: var(--weight-semibold);
+}
+
+.headerPlaceholder {
+  width: 60px;
+}
+
+.content {
+  padding: 0;
+  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + var(--spacing-3xl));
+}
+
+.dateCard {
+  background: var(--color-accent);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  margin: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  color: white;
+}
+
+.dateNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+}
+
+.dateNavBtn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: var(--weight-bold);
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dateNavBtn:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.dateCenter {
+  text-align: center;
+}
+
+.dateMain {
+  font-size: var(--font-xl);
+  font-weight: var(--weight-bold);
+  margin-bottom: 2px;
+}
+
+.dateSub {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.weekday {
+  font-size: var(--font-base);
+  opacity: 0.9;
+}
+
+.todayBadge {
+  padding: 2px var(--spacing-sm);
+  font-size: var(--font-xs);
+  font-weight: var(--weight-medium);
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-full);
+}
+
+.dayTypes {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.dayTypeBadge {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-xs);
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+}
+
+.backToTodayBtn {
+  display: block;
+  width: 100%;
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.backToTodayBtn:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  margin: 0 var(--spacing-lg) var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cardTitle {
+  font-size: var(--font-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.cardBadge {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-xs);
+  font-weight: var(--weight-medium);
+  color: var(--color-accent);
+  background: var(--color-accent-light);
+  border-radius: var(--radius-full);
+}
+
+.tabBar {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tab {
+  flex: 1;
+  padding: var(--spacing-sm);
+  font-size: var(--font-base);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab:active {
+  transform: scale(0.98);
+}
+
+.tabActive {
+  color: var(--color-accent);
+  background: var(--color-accent-light);
+}
+
+.tabContent {
+  min-height: 100px;
+}
+
+.restDayHint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-xl);
+  text-align: center;
+}
+
+.restDayIcon {
+  font-size: 48px;
+  margin-bottom: var(--spacing-md);
+}
+
+.restDayText {
+  font-size: var(--font-base);
+  color: var(--color-text-secondary);
+}
+
+.emptyHint {
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-sm);
+}
+
+.trainingSection {
+  margin-bottom: var(--spacing-lg);
+}
+
+.trainingSection:last-child {
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  font-size: var(--font-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-accent);
+  margin-bottom: var(--spacing-sm);
+}
+
+.exerciseItem {
+  padding: var(--spacing-md);
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.exerciseItem:last-child {
+  margin-bottom: 0;
+}
+
+.exerciseName {
+  font-size: var(--font-base);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
+  margin-bottom: 2px;
+}
+
+.exerciseDetail {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.superSetBadge {
+  padding: 2px var(--spacing-xs);
+  font-size: var(--font-xs);
+  color: var(--color-warning);
+  background: rgba(245, 158, 11, 0.1);
+  border-radius: var(--radius-sm);
+}
+
+.mealSection {
+  margin-bottom: var(--spacing-lg);
+}
+
+.mealSection:last-child {
+  margin-bottom: 0;
+}
+
+.mealTitle {
+  font-size: var(--font-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-accent);
+  margin-bottom: var(--spacing-sm);
+}
+
+.foodItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.foodItem:last-child {
+  margin-bottom: 0;
+}
+
+.foodName {
+  font-size: var(--font-sm);
+  color: var(--color-text-primary);
+}
+
+.foodQuantity {
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.scheduleList {
+  display: flex;
+  flex-direction: column;
+}
+
+.scheduleItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.scheduleItem:last-child {
+  border-bottom: none;
+}
+
+.scheduleTime {
+  font-size: var(--font-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-accent);
+  min-width: 60px;
+}
+
+.scheduleLabel {
+  font-size: var(--font-base);
+  color: var(--color-text-primary);
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-3xl);
+  gap: var(--spacing-lg);
+}
+
+.emptyIcon {
+  font-size: 64px;
+  opacity: 0.5;
+}
+
+.emptyText {
+  font-size: var(--font-base);
+  color: var(--color-text-tertiary);
+}
+
+.actionButton {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-base);
+  font-weight: var(--weight-medium);
+  color: white;
+  background: var(--color-accent);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.actionButton:active {
+  opacity: 0.8;
+}
+
+/* 动作卡片 */
+.exerciseCard {
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-sm);
+  overflow: hidden;
+}
+
+.exerciseCard:last-child {
+  margin-bottom: 0;
+}
+
+.exerciseHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  cursor: pointer;
+}
+
+.exerciseInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.exerciseRight {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.expandIcon {
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+}
+
+.exerciseBody {
+  padding: 0 var(--spacing-md) var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+}
+
+.setsHeader {
+  display: grid;
+  grid-template-columns: 60px 1fr 1fr 32px;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) 0;
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+  text-align: center;
+}
+
+.setRow {
+  display: grid;
+  grid-template-columns: 60px 1fr 1fr 32px;
+  gap: var(--spacing-sm);
+  align-items: center;
+  padding: var(--spacing-xs) 0;
+}
+
+.setNumber {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.setInput {
+  width: 100%;
+  padding: var(--spacing-sm);
+  font-size: var(--font-sm);
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.setInput:focus {
+  border-color: var(--color-accent);
+}
+
+.removeSetBtn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-sm);
+  color: var(--color-danger);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.removeSetBtn:active {
+  background: var(--color-border);
+}
+
+.addSetBtn {
+  width: 100%;
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-accent);
+  background: var(--color-accent-light);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.addSetBtn:active {
+  opacity: 0.7;
+}
+
+/* 有氧输入 */
+.cardioInput {
+  width: 50px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-sm);
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.cardioInput:focus {
+  border-color: var(--color-accent);
+}
+
+.cardioUnit {
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+}
+
+/* 状态徽章 */
+.statusBadge {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-xs);
+  font-weight: var(--weight-medium);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  user-select: none;
+}
+
+.statusCompleted {
+  color: var(--color-success);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.statusSkipped {
+  color: var(--color-warning);
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.statusPending {
+  color: var(--color-text-tertiary);
+  background: var(--color-border);
+}
+
+/* 餐次卡片 */
+.mealCard {
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-sm);
+  overflow: hidden;
+}
+
+.mealCard:last-child {
+  margin-bottom: 0;
+}
+
+.mealHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  cursor: pointer;
+}
+
+.mealBody {
+  padding: 0 var(--spacing-md) var(--spacing-md);
+}

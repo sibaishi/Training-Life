@@ -1,0 +1,517 @@
+.page {
+  min-height: 100%;
+  background: var(--color-bg);
+}
+
+.header {
+  padding: var(--spacing-lg);
+  padding-top: var(--spacing-xl);
+}
+
+.pageTitle {
+  font-size: var(--font-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+}
+
+.content {
+  padding: 0 var(--spacing-lg);
+  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + var(--spacing-3xl));
+}
+
+/* 提醒区 */
+.remindersSection {
+  margin-bottom: var(--spacing-lg);
+}
+
+.reminderCard {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--color-danger);
+}
+
+.reminderCard:last-child {
+  margin-bottom: 0;
+}
+
+.reminderSystem {
+  background: rgba(59, 130, 246, 0.1);
+  border-left-color: var(--color-info);
+}
+
+.reminderDot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-danger);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.reminderIcon {
+  font-size: var(--font-base);
+  flex-shrink: 0;
+}
+
+.reminderText {
+  flex: 1;
+  font-size: var(--font-sm);
+  color: var(--color-text-primary);
+}
+
+.reminderDismiss {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-sm);
+  color: var(--color-text-tertiary);
+  background: none;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.reminderDismiss:active {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* 日期卡片 */
+.dateCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  background: var(--color-accent);
+  border-radius: var(--radius-md);
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.dateCard:active {
+  transform: scale(0.98);
+}
+
+.dateMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dateText {
+  font-size: var(--font-lg);
+  font-weight: var(--weight-bold);
+}
+
+.weekdayText {
+  font-size: var(--font-sm);
+  opacity: 0.9;
+}
+
+.dayTypeBadge {
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-sm);
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+}
+
+/* 通用卡片 */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.card:active {
+  transform: scale(0.98);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+}
+
+.cardTitle {
+  font-size: var(--font-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.expandIcon {
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+}
+
+.emptyHint {
+  font-size: var(--font-sm);
+  color: var(--color-text-tertiary);
+  text-align: center;
+  padding: var(--spacing-md);
+}
+
+/* 计划信息 */
+.planInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.planName {
+  font-size: var(--font-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.planProgressBar {
+  height: 6px;
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.planProgressFill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: var(--radius-full);
+  transition: width 0.3s;
+}
+
+.planProgressText {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
+
+/* 身体状态 */
+.bodyStats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xl);
+}
+
+.bodyStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.bodyStatValue {
+  font-size: var(--font-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+}
+
+.bodyStatLabel {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
+
+.bodyStatDivider {
+  width: 1px;
+  height: 40px;
+  background: var(--color-border);
+}
+
+.bodyDetail {
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+}
+
+.bodyDetailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) 0;
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
+
+.bodyDetailRow span:last-child {
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
+}
+
+.positive {
+  color: var(--color-success) !important;
+}
+
+.negative {
+  color: var(--color-danger) !important;
+}
+
+/* 进度条 */
+.progressValue {
+  font-size: var(--font-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-accent);
+}
+
+.progressBar {
+  height: 8px;
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: var(--radius-full);
+  transition: width 0.3s;
+}
+
+/* 饮水 */
+.waterStats {
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-info);
+}
+
+.waterProgressBar {
+  height: 8px;
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--spacing-sm);
+}
+
+.waterProgressFill {
+  height: 100%;
+  background: var(--color-info);
+  border-radius: var(--radius-full);
+  transition: width 0.3s;
+}
+
+.waterRemaining {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+/* 采购统计 */
+.groceryStats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: var(--spacing-md);
+}
+
+.groceryStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.groceryStatValue {
+  font-size: var(--font-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+}
+
+.groceryStatLabel {
+  font-size: var(--font-xs);
+  color: var(--color-text-secondary);
+}
+
+/* ============ 趋势图表 - 三线折线图 ============ */
+.trendContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.chartWrapper {
+  position: relative;
+}
+
+.chartSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+  aspect-ratio: 2 / 1;
+}
+
+.gridLine {
+  stroke: var(--color-border);
+  stroke-width: 0.3;
+  stroke-dasharray: 2, 2;
+}
+
+/* 折线样式 */
+.lineWeight {
+  stroke: #3b82f6;
+  stroke-width: 0.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lineBodyFat {
+  stroke: #f59e0b;
+  stroke-width: 0.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lineSleep {
+  stroke: #8b5cf6;
+  stroke-width: 0.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* 数据点样式 */
+.dotWeight {
+  fill: #3b82f6;
+}
+
+.dotBodyFat {
+  fill: #f59e0b;
+}
+
+.dotSleep {
+  fill: #8b5cf6;
+}
+
+/* X轴标签 */
+.chartXAxis {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-xs) 10% 0;
+}
+
+.chartXLabel {
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+  text-align: center;
+  flex: 1;
+}
+
+/* 图例 */
+.chartLegend {
+  display: flex;
+  justify-content: space-around;
+  padding: var(--spacing-sm);
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.legendWeight {
+  background: #3b82f6;
+}
+
+.legendBodyFat {
+  background: #f59e0b;
+}
+
+.legendSleep {
+  background: #8b5cf6;
+}
+
+.legendLabel {
+  font-size: var(--font-xs);
+  color: var(--color-text-secondary);
+}
+
+.legendValue {
+  font-size: var(--font-xs);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* 趋势指示 */
+.trendUp {
+  color: var(--color-danger);
+  font-size: 10px;
+}
+
+.trendDown {
+  color: var(--color-success);
+  font-size: 10px;
+}
+
+.trendUpGood {
+  color: var(--color-success);
+  font-size: 10px;
+}
+
+.trendDownBad {
+  color: var(--color-danger);
+  font-size: 10px;
+}
+
+/* 空状态 */
+.trendEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-lg);
+}
+
+.trendEmptyIcon {
+  font-size: 32px;
+  opacity: 0.5;
+}
+
+.trendEmptyText {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
+
+.trendEmptyHint {
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+}
+
+/* 占位样式（保留兼容） */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-3xl) var(--spacing-lg);
+  color: var(--color-text-tertiary);
+  text-align: center;
+  gap: var(--spacing-md);
+}
+
+.placeholderIcon {
+  font-size: 48px;
+  opacity: 0.5;
+}
+
+.placeholderText {
+  font-size: var(--font-base);
+}
