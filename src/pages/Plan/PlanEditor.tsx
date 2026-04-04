@@ -147,50 +147,50 @@ export default function PlanEditor() {
   };
 
 const handleSave = () => {
-  if (!planName.trim() || !totalWeeks) {
-    alert('请先完成基础信息设置');
-    setShowBasicInfoModal(true);
-    return;
-  }
-
-  const newPlanId = planId || generateId();
-  const now = new Date().toISOString();  // ← 新增这一行
-
-  const newPlan: Plan = {
-    id: newPlanId,
-    name: planName,
-    totalWeeks: parseInt(totalWeeks),
-    createdAt: planId 
-      ? (state.plans.find(p => p.id === planId)?.createdAt || now)  // ← 修改
-      : now,                                                         // ← 修改
-    updatedAt: now,  // ← 修改
-    targetWeight: targetWeight ? parseFloat(targetWeight) : undefined,
-    targetBodyFat: targetBodyFat ? parseFloat(targetBodyFat) : undefined,
-    trainingDays,
-    workdays,
-    weeklyTraining,
-    trainingDayDiet,
-    restDayDiet,
-    schedule,
-  };
-
-  setState(prev => {
-    const existingIndex = prev.plans.findIndex(p => p.id === newPlan.id);
-    if (existingIndex >= 0) {
-      const updated = [...prev.plans];
-      updated[existingIndex] = newPlan;
-      return { ...prev, plans: updated };
-    } else {
-      return { ...prev, plans: [...prev.plans, newPlan] };
+    if (!planName.trim() || !totalWeeks) {
+      alert('请先完成基础信息设置');
+      setShowBasicInfoModal(true);
+      return;
     }
-  });
 
-  setHasUnsavedChanges(false);
-  alert('保存成功');
-  
-  setIsEditing(false);
-  navigate(`/plan/${newPlanId}`);
-};
+    const newPlanId = planId || generateId();
+    const now = new Date().toISOString();
+
+    const newPlan: Plan = {
+      id: newPlanId,
+      name: planName,
+      totalWeeks: parseInt(totalWeeks),
+      createdAt: planId 
+        ? (state.plans.find(p => p.id === planId)?.createdAt || now) 
+        : now,
+      updatedAt: now,
+      targetWeight: targetWeight ? parseFloat(targetWeight) : undefined,
+      targetBodyFat: targetBodyFat ? parseFloat(targetBodyFat) : undefined,
+      trainingDays,
+      workdays,
+      weeklyTraining,
+      trainingDayDiet,
+      restDayDiet,
+      schedule,
+    };
+
+    setState(prev => {
+      const existingIndex = prev.plans.findIndex(p => p.id === newPlan.id);
+      if (existingIndex >= 0) {
+        const updated = [...prev.plans];
+        updated[existingIndex] = newPlan;
+        return { ...prev, plans: updated };
+      } else {
+        return { ...prev, plans: [...prev.plans, newPlan] };
+      }
+    });
+
+    setHasUnsavedChanges(false);
+    alert('保存成功');
+    
+    setIsEditing(false);
+    navigate(`/plan/${newPlanId}`);
+  };
 
   const handleExit = () => {
     if (hasUnsavedChanges) {
