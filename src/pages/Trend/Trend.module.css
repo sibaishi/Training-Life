@@ -3,45 +3,87 @@
   background: var(--color-bg);
 }
 
+/* ==================== 顶部导航 - 毛玻璃 ==================== */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-lg);
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  background: var(--glass-bg-strong);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border-bottom: 1px solid var(--glass-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .backBtn {
-  padding: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
   font-size: var(--font-base);
-  color: var(--color-text-primary);
+  font-weight: var(--weight-medium);
+  color: var(--color-accent);
   background: none;
   border: none;
   cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.backBtn:active {
+  opacity: 0.6;
 }
 
 .headerTitle {
   font-size: var(--font-lg);
   font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
 }
 
 .headerPlaceholder {
   width: 60px;
 }
 
+/* ==================== 内容区 ==================== */
 .content {
   padding: var(--spacing-lg);
   padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + var(--spacing-3xl));
 }
 
-/* 选择器卡片 */
+/* ==================== 通用毛玻璃卡片 ==================== */
+.selectorCard,
+.chartCard {
+  position: relative;
+  overflow: hidden;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.selectorCard::before,
+.chartCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+.selectorCard > *,
+.chartCard > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ==================== 选择器卡片 ==================== */
 .selectorCard {
-  background: var(--color-surface);
-  border-radius: var(--radius-md);
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
-  box-shadow: var(--shadow-sm);
 }
 
 .selectorLabel {
@@ -61,11 +103,11 @@
   font-size: var(--font-sm);
   font-weight: var(--weight-medium);
   color: var(--color-text-secondary);
-  background: var(--color-bg);
-  border: 2px solid var(--color-border);
+  background: var(--color-surface-secondary);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
 }
 
 .selectorBtn:active {
@@ -74,16 +116,14 @@
 
 .selectorBtnActive {
   color: white;
-  background: var(--color-accent);
+  background: var(--gradient-accent);
   border-color: var(--color-accent);
+  box-shadow: var(--shadow-accent);
 }
 
-/* 图表卡片 */
+/* ==================== 图表卡片 ==================== */
 .chartCard {
-  background: var(--color-surface);
-  border-radius: var(--radius-md);
   padding: var(--spacing-lg);
-  box-shadow: var(--shadow-sm);
 }
 
 .chartHeader {
@@ -91,6 +131,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-lg);
+  gap: var(--spacing-sm);
 }
 
 .chartTitle {
@@ -102,9 +143,10 @@
 .chartCount {
   font-size: var(--font-xs);
   color: var(--color-text-tertiary);
+  white-space: nowrap;
 }
 
-/* 图表区域 */
+/* ==================== 图表区域 ==================== */
 .chartWrapper {
   display: flex;
   gap: var(--spacing-sm);
@@ -136,7 +178,7 @@
 }
 
 .gridLine {
-  stroke: var(--color-border);
+  stroke: var(--color-divider);
   stroke-width: 0.3;
   stroke-dasharray: 2, 2;
 }
@@ -145,12 +187,12 @@
   stroke: var(--color-accent);
   stroke-width: 0.5;
   stroke-dasharray: 3, 2;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 .dataLine {
   stroke: var(--color-accent);
-  stroke-width: 0.8;
+  stroke-width: 0.9;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -166,13 +208,15 @@
   padding: 2px var(--spacing-xs);
   font-size: 10px;
   color: var(--color-accent);
-  background: var(--color-surface);
+  background: var(--glass-bg-strong);
   border: 1px solid var(--color-accent);
   border-radius: var(--radius-sm);
   white-space: nowrap;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
-/* X轴标签 */
+/* ==================== X轴标签 ==================== */
 .chartXAxis {
   display: flex;
   justify-content: space-between;
@@ -185,13 +229,13 @@
   text-align: center;
 }
 
-/* 统计摘要 */
+/* ==================== 统计摘要 ==================== */
 .chartSummary {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
   padding-top: var(--spacing-lg);
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-divider);
   margin-top: var(--spacing-md);
 }
 
@@ -205,9 +249,9 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
-  padding: var(--spacing-sm);
-  background: var(--color-bg);
-  border-radius: var(--radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-md);
 }
 
 .summaryIcon {
@@ -228,23 +272,24 @@
   color: var(--color-text-primary);
 }
 
-.summaryValue.good {
+.good {
   color: var(--color-success);
 }
 
-.summaryValue.bad {
+.bad {
   color: var(--color-danger);
 }
 
-/* 目标对比行 */
+/* ==================== 目标对比行 ==================== */
 .targetRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--spacing-md);
   padding: var(--spacing-md);
-  background: var(--color-accent-light);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-accent);
+  background: var(--color-accent-soft);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(52, 199, 89, 0.22);
 }
 
 .targetInfo {
@@ -265,17 +310,10 @@
 .targetDistance {
   font-size: var(--font-sm);
   font-weight: var(--weight-semibold);
+  text-align: right;
 }
 
-.targetDistance.good {
-  color: var(--color-success);
-}
-
-.targetDistance.bad {
-  color: var(--color-danger);
-}
-
-/* 空状态 */
+/* ==================== 空状态 ==================== */
 .emptyState {
   display: flex;
   flex-direction: column;
@@ -305,14 +343,19 @@
 .emptyBtn {
   padding: var(--spacing-md) var(--spacing-xl);
   font-size: var(--font-base);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-semibold);
   color: white;
-  background: var(--color-accent);
+  background: var(--gradient-accent-animated);
+  background-size: 400% 400%;
+  animation: gradientWave 8s ease-in-out infinite;
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
+  box-shadow: var(--shadow-accent);
+  transition: all var(--transition-fast);
 }
 
 .emptyBtn:active {
-  opacity: 0.8;
+  opacity: 0.85;
+  transform: scale(0.97);
 }
