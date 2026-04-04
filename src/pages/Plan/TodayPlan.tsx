@@ -20,13 +20,7 @@ export default function TodayPlan() {
   if (!currentPlan) {
     return (
       <div className={styles.page}>
-        <div className={styles.header}>
-          <button className={styles.backBtn} onClick={() => navigate('/plan')}>
-            ← 返回
-          </button>
-          <h1 className={styles.headerTitle}>当天计划</h1>
-          <div className={styles.headerPlaceholder}></div>
-        </div>
+        {/* ✨ 移除了头部标题 */}
         <div className={styles.emptyState}>
           <div className={styles.emptyIcon}>📋</div>
           <div className={styles.emptyText}>还没有启用的计划</div>
@@ -61,17 +55,10 @@ export default function TodayPlan() {
 
   return (
     <div className={styles.page}>
-      {/* 顶部导航 */}
-      <div className={styles.header}>
-        <button className={styles.backBtn} onClick={() => navigate('/plan')}>
-          ← 返回
-        </button>
-        <h1 className={styles.headerTitle}>当天计划</h1>
-        <div className={styles.headerPlaceholder}></div>
-      </div>
+      {/* ✨ 移除了头部导航栏 */}
 
       <div className={styles.content}>
-        {/* 日期信息卡 */}
+        {/* 日期信息卡 - 动态渐变 */}
         <div className={styles.dateCard}>
           <div className={styles.dateMain}>{formatDisplayDate(today)}</div>
           <div className={styles.dateSub}>
