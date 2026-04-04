@@ -17,14 +17,14 @@ interface CalculatedGroceryItem {
 function getWeekRange(dateStr: string): { startDate: string; endDate: string } {
   const date = new Date(dateStr);
   const day = date.getDay();
-  const diff = day === 0 ? -6 : 1 - day; // 周日算上周，调整到周一
-  
+  const diff = day === 0 ? -6 : 1 - day;
+
   const monday = new Date(date);
   monday.setDate(date.getDate() + diff);
-  
+
   const sunday = new Date(monday);
   sunday.setDate(monday.getDate() + 6);
-  
+
   return {
     startDate: monday.toISOString().split('T')[0],
     endDate: sunday.toISOString().split('T')[0],
@@ -51,20 +51,17 @@ export default function Grocery() {
   const today = getTodayString();
   const weekRange = getWeekRange(today);
 
-  // 检查是否需要重新生成采购清单
   const needsRegeneration = useMemo(() => {
     if (!currentPlan) return false;
 
     const existing = state.groceries.find(g => g.planId === currentPlan.id);
-    
-    if (!existing) return true; // 没有采购记录，需要生成
 
-    // 检查日期范围是否匹配（是否是本周的清单）
+    if (!existing) return true;
+
     if (existing.startDate !== weekRange.startDate || existing.endDate !== weekRange.endDate) {
       return true;
     }
 
-    // 检查计划是否更新过（对比生成时间和计划更新时间）
     if (existing.generatedAt && currentPlan.updatedAt > existing.generatedAt) {
       return true;
     }
@@ -72,7 +69,6 @@ export default function Grocery() {
     return false;
   }, [currentPlan, state.groceries, weekRange]);
 
-  // 计算本周采购需求
   const groceryItems = useMemo((): CalculatedGroceryItem[] => {
     if (!currentPlan) return [];
 
@@ -97,14 +93,12 @@ export default function Grocery() {
     addFoods(currentPlan.trainingDayDiet, trainingDaysCount);
     addFoods(currentPlan.restDayDiet, restDaysCount);
 
-    // 加10%损耗并向上取整
     const items: CalculatedGroceryItem[] = [];
     foodMap.forEach((value, key) => {
       const foodName = key.split('_')[0];
       const withLoss = value.amount * 1.1;
       const rounded = Math.ceil(withLoss);
 
-      // 从已有记录中获取采购量和费用（如果需要重新生成，则不保留旧数据）
       const existing = state.groceries.find(g => g.planId === currentPlan.id);
       const existingItem = existing?.items.find(i => i.foodName === foodName);
 
@@ -117,23 +111,19 @@ export default function Grocery() {
       });
     });
 
-    // 按需求量从大到小排序
     items.sort((a, b) => b.requiredAmount - a.requiredAmount);
 
     return items;
   }, [currentPlan, state.groceries, needsRegeneration]);
 
-  // 如果需要重新生成，自动创建新的采购记录
   React.useEffect(() => {
     if (!currentPlan || !needsRegeneration || groceryItems.length === 0) return;
 
     const weekIndex = getPlanWeekIndex(currentPlan.createdAt, today);
 
     setState(prev => {
-      // 移除旧的采购记录（同一个计划的）
       const filteredGroceries = prev.groceries.filter(g => g.planId !== currentPlan.id);
 
-      // 创建新的采购记录
       const newGrocery = {
         planId: currentPlan.id,
         weekIndex,
@@ -158,17 +148,16 @@ export default function Grocery() {
     });
   }, [currentPlan, needsRegeneration, groceryItems, weekRange, today, setState]);
 
-  // 更新采购记录
   const updateGroceryItem = (foodName: string, field: 'purchased' | 'cost', value: number) => {
     if (!currentPlan) return;
 
     setState(prev => {
       const existingIndex = prev.groceries.findIndex(g => g.planId === currentPlan.id);
-      if (existingIndex < 0) return prev; // 没有采购记录，不应该发生
+      if (existingIndex < 0) return prev;
 
-      let grocery = { ...prev.groceries[existingIndex] };
+      const grocery = { ...prev.groceries[existingIndex] };
       const itemIndex = grocery.items.findIndex(i => i.foodName === foodName);
-      if (itemIndex < 0) return prev; // 食材不存在
+      if (itemIndex < 0) return prev;
 
       const updatedItem = {
         ...grocery.items[itemIndex],
@@ -203,14 +192,12 @@ export default function Grocery() {
     setInputValue('');
   };
 
-  // 计算统计数据
   const completedCount = groceryItems.filter(i => i.purchasedAmount >= i.requiredAmount).length;
   const totalCount = groceryItems.length;
   const completionRate = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
   const weekCost = groceryItems.reduce((sum, i) => sum + i.cost, 0);
 
-  // 本月费用（当前月所有采购记录）
-  const currentMonth = today.substring(0, 7); // "2024-01"
+  const currentMonth = today.substring(0, 7);
   const monthCost = state.groceries
     .filter(g => g.startDate.startsWith(currentMonth))
     .reduce((sum, g) => sum + g.items.reduce((s, i) => s + i.cost, 0), 0);
@@ -218,12 +205,11 @@ export default function Grocery() {
   if (!currentPlan) {
     return (
       <div className={styles.page}>
-        <div className={styles.header}>
-          <h1 className={styles.pageTitle}>采购</h1>
-        </div>
-        <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>🛒</div>
-          <div className={styles.emptyText}>暂无启用的计划</div>
+        <div className={styles.content}>
+          <div className={styles.emptyState}>
+            <div className={styles.emptyIcon}>🛒</div>
+            <div className={styles.emptyText}>暂无启用的计划</div>
+          </div>
         </div>
       </div>
     );
@@ -231,22 +217,36 @@ export default function Grocery() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <h1 className={styles.pageTitle}>采购</h1>
-      </div>
-
       <div className={styles.content}>
-        {/* 顶部信息 */}
+        {/* 顶部信息卡 */}
         <div className={styles.infoCard}>
-          <div className={styles.infoRow}>
-            <span className={styles.infoLabel}>当前计划</span>
-            <span className={styles.infoValue}>{currentPlan.name}</span>
-          </div>
-          <div className={styles.infoRow}>
-            <span className={styles.infoLabel}>本周</span>
-            <span className={styles.infoValue}>
-              {weekRange.startDate} ~ {weekRange.endDate}
-            </span>
+          <div className={styles.infoCardInner}>
+            <div className={styles.infoTop}>
+              <span className={styles.infoTag}>本周采购</span>
+              <span className={styles.infoRate}>{completionRate}%</span>
+            </div>
+
+            <div className={styles.infoMain}>
+              <div className={styles.infoPlanName}>{currentPlan.name}</div>
+              <div className={styles.infoDateRange}>
+                {weekRange.startDate} ~ {weekRange.endDate}
+              </div>
+            </div>
+
+            <div className={styles.infoStats}>
+              <div className={styles.infoStat}>
+                <span className={styles.infoStatValue}>{completedCount}/{totalCount}</span>
+                <span className={styles.infoStatLabel}>已完成</span>
+              </div>
+              <div className={styles.infoStat}>
+                <span className={styles.infoStatValue}>¥{weekCost.toFixed(1)}</span>
+                <span className={styles.infoStatLabel}>本周费用</span>
+              </div>
+              <div className={styles.infoStat}>
+                <span className={styles.infoStatValue}>¥{monthCost.toFixed(1)}</span>
+                <span className={styles.infoStatLabel}>本月费用</span>
+              </div>
+            </div>
           </div>
         </div>
 
