@@ -396,7 +396,6 @@ export default function PlanList() {
 
     return (
       <div className={styles.page}>
-        {/* ✨ 移除了标题，只保留标签栏 */}
         <div className={styles.tabBar}>
           <button
             className={`${styles.tab} ${isTodayTab ? styles.active : ''}`}
@@ -438,7 +437,6 @@ export default function PlanList() {
                 </button>
               </div>
               
-              {/* 显示计划名称 */}
               <div className={todayStyles.planInfo}>
                 <span className={todayStyles.planName}>{showPlanName}</span>
                 {isHistoricalPlan && (
@@ -461,7 +459,6 @@ export default function PlanList() {
                 </button>
               )}
 
-              {/* 未来日期提示 */}
               {selectedDate > today && (
                 <div className={todayStyles.futureHint}>
                   📅 这是未来的日期，仅供预览
@@ -599,7 +596,7 @@ export default function PlanList() {
   // 完整计划标签内容
   return (
     <div className={styles.page}>
-    {/* ✨ 移除了标题和右上角按钮 */}
+      {/* ✨ 移除了右上角新建按钮 */}
       <div className={styles.tabBar}>
         <button
           className={`${styles.tab} ${isTodayTab ? styles.active : ''}`}
