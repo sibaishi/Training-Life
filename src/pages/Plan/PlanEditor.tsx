@@ -204,7 +204,7 @@ const handleSave = () => {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={editorStyles.page}>
       <div className={editorStyles.editorHeader}>
         <button className={editorStyles.backButton} onClick={handleExit}>
           ← 退出编辑
