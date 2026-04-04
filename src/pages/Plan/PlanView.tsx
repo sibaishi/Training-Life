@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppState } from '../../contexts/AppContext';
-import { getTodayString, getWeekdayLabel, addDays } from '../../utils/date';
+import { getWeekdayLabel, addDays, getTodayString } from '../../utils/date';
 import { generateId } from '../../utils/id';
 import {
   Plan,
@@ -88,15 +88,15 @@ export default function PlanView() {
     alert(`计划「${plan.name}」将于明天（${tomorrow}）生效`);
   };
 
-const handleCopyPlan = () => {
-  const now = new Date().toISOString();
-  const newPlan: Plan = {
-    ...JSON.parse(JSON.stringify(plan)),
-    id: generateId(),
-    name: `${plan.name} - 副本`,
-    createdAt: now,
-    updatedAt: now,
-  };
+  const handleCopyPlan = () => {
+    const now = new Date().toISOString();
+    const newPlan: Plan = {
+      ...JSON.parse(JSON.stringify(plan)),
+      id: generateId(),
+      name: `${plan.name} - 副本`,
+      createdAt: now,
+      updatedAt: now,
+    };
 
     setState(prev => ({
       ...prev,
