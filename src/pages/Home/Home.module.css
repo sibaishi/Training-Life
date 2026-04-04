@@ -92,7 +92,7 @@
   cursor: pointer;
   overflow: hidden;
   
-  /* ✨ 动态渐变背景 */
+  /* 动态渐变背景 */
   background: var(--gradient-accent-animated);
   background-size: 400% 400%;
   animation: gradientWave 8s ease-in-out infinite;
@@ -101,7 +101,7 @@
   transition: transform var(--transition-fast), box-shadow var(--transition-normal);
 }
 
-/* ✨ 微光层 */
+/* ✨ 边缘羽化高光层 */
 .dateCard::before {
   content: '';
   position: absolute;
@@ -109,17 +109,16 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.25) 0%,
-    rgba(255, 255, 255, 0.05) 50%,
-    rgba(255, 255, 255, 0.15) 100%
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    rgba(255, 255, 255, 0.18) 100%
   );
   pointer-events: none;
   z-index: 1;
 }
 
-/* ✨ 动态光斑层 */
+/* 动态光斑层 - 调淡 */
 .dateCard::after {
   content: '';
   position: absolute;
@@ -129,8 +128,8 @@
   height: 200%;
   background: radial-gradient(
     circle at center,
-    rgba(255, 255, 255, 0.2) 0%,
-    transparent 60%
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 50%
   );
   animation: shimmer 6s ease-in-out infinite;
   pointer-events: none;
@@ -145,7 +144,7 @@
   box-shadow: var(--shadow-accent-hover);
 }
 
-/* ✨ 确保内容在最上层 */
+/* 确保内容在最上层 */
 .dateCardContent {
   position: relative;
   z-index: 2;
