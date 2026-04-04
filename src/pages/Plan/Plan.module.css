@@ -1,23 +1,16 @@
 .page {
   padding: var(--spacing-lg);
+  padding-top: var(--spacing-xl);
   min-height: 100%;
   background: var(--color-bg);
 }
 
-/* ==================== 头部 ==================== */
+/* ✨ 移除了 .header 中的 pageTitle */
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-bottom: var(--spacing-lg);
-  padding-top: var(--spacing-lg);
-}
-
-.pageTitle {
-  font-size: var(--font-3xl);
-  font-weight: var(--weight-bold);
-  color: var(--color-text-primary);
-  letter-spacing: -0.02em;
 }
 
 /* ==================== 标签栏 ==================== */
@@ -26,8 +19,11 @@
   gap: var(--spacing-xs);
   margin-bottom: var(--spacing-lg);
   padding: var(--spacing-xs);
-  background: var(--color-surface-secondary);
-  border-radius: var(--radius-sm);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
 }
 
 .tab {
@@ -38,16 +34,16 @@
   color: var(--color-text-secondary);
   background: none;
   border: none;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition-normal);
   text-align: center;
 }
 
 .tab.active {
-  color: var(--color-text-primary);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
+  color: white;
+  background: var(--gradient-accent);
+  box-shadow: var(--shadow-accent);
   font-weight: var(--weight-semibold);
 }
 
@@ -72,16 +68,40 @@
   opacity: 0.8;
 }
 
-/* ==================== 计划卡片 ==================== */
+/* ==================== 计划卡片 - 毛玻璃 ==================== */
 .planCard {
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
+  position: relative;
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border);
   cursor: pointer;
+  overflow: hidden;
+  
+  /* 毛玻璃效果 */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  
   transition: all var(--transition-fast);
+}
+
+/* 噪点纹理层 */
+.planCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+.planCard > * {
+  position: relative;
+  z-index: 1;
 }
 
 .planCard:active {
@@ -91,12 +111,12 @@
 
 .planCard.current {
   border: 1.5px solid var(--color-accent);
-  background: var(--color-accent-light);
+  background: var(--glass-bg);
 }
 
 .planCard.pending {
   border: 1.5px solid var(--color-pending);
-  background: var(--color-warning-bg);
+  background: var(--glass-bg);
 }
 
 .planName {
@@ -147,14 +167,19 @@
   font-size: var(--font-base);
   font-weight: var(--weight-semibold);
   color: white;
-  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
   border: none;
   border-radius: var(--radius-md);
-  box-shadow: 0 4px 16px rgba(52, 199, 89, 0.3);
   cursor: pointer;
-  transition: all var(--transition-fast);
   z-index: 50;
   text-align: center;
+  
+  /* 动态渐变 */
+  background: var(--gradient-accent-animated);
+  background-size: 400% 400%;
+  animation: gradientWave 8s ease-in-out infinite;
+  box-shadow: var(--shadow-accent);
+  
+  transition: all var(--transition-fast);
 }
 
 .bottomButton:active {
@@ -167,12 +192,18 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border);
   cursor: pointer;
+  overflow: hidden;
+  
+  /* 毛玻璃效果 */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  
   transition: all var(--transition-fast);
 }
 
@@ -210,8 +241,10 @@
   width: 100%;
   padding: var(--spacing-md);
   font-size: var(--font-base);
-  background: var(--color-surface-secondary);
-  border: 1px solid var(--color-border);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-sm);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
@@ -244,5 +277,6 @@
 
 .footerButton.confirm {
   color: white;
-  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+  background: var(--gradient-accent);
+  box-shadow: var(--shadow-accent);
 }
