@@ -15,7 +15,7 @@
   --color-border: rgba(0, 0, 0, 0.06);
   --color-divider: rgba(0, 0, 0, 0.04);
   
-  /* 重点色 - 淡绿色 */
+  /* ✨ 重点色 - 淡绿色 */
   --color-accent: #34c759;
   --color-accent-soft: rgba(52, 199, 89, 0.12);
   --color-accent-hover: #2db84e;
@@ -34,10 +34,22 @@
   --color-danger-bg: rgba(255, 59, 48, 0.1);
   --color-info-bg: rgba(0, 122, 255, 0.1);
   
-  /* 毛玻璃 */
+  /* 🔄 毛玻璃 - 增强透明度和边框 */
   --glass-bg: rgba(255, 255, 255, 0.72);
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --glass-blur: 20px;
+  --glass-bg-strong: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-blur: blur(20px);
+  
+  /* ✨ 动态渐变 - 新增 */
+  --gradient-accent: linear-gradient(135deg, #34c759 0%, #30d158 50%, #5ad67d 100%);
+  --gradient-accent-animated: linear-gradient(
+    -45deg,
+    #34c759,
+    #30d158,
+    #5ad67d,
+    #32b857,
+    #34c759
+  );
   
   /* 间距 */
   --spacing-xs: 4px;
@@ -48,12 +60,13 @@
   --spacing-2xl: 24px;
   --spacing-3xl: 32px;
 
-  /* 圆角 */
+  /* 🔄 圆角 - 加大 */
   --radius-xs: 6px;
   --radius-sm: 10px;
   --radius-md: 14px;
-  --radius-lg: 18px;
-  --radius-xl: 22px;
+  --radius-lg: 20px;        /* 18px → 20px */
+  --radius-xl: 28px;        /* 22px → 28px */
+  --radius-2xl: 32px;       /* ✨ 新增 */
   --radius-full: 9999px;
 
   /* 字号 */
@@ -71,11 +84,15 @@
   --weight-semibold: 600;
   --weight-bold: 700;
 
-  /* 阴影 - 苹果风柔和阴影 */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.03);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+  /* 🔄 阴影 - 优化柔和度 */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.10), 0 8px 16px rgba(0, 0, 0, 0.05);
+  
+  /* ✨ 重点色阴影 - 新增 */
+  --shadow-accent: 0 8px 24px rgba(52, 199, 89, 0.25);
+  --shadow-accent-hover: 0 12px 32px rgba(52, 199, 89, 0.35);
   
   /* 导航栏 */
   --nav-height: 60px;
@@ -116,11 +133,88 @@
   --color-danger-bg: rgba(255, 69, 58, 0.15);
   --color-info-bg: rgba(10, 132, 255, 0.15);
   
-  --glass-bg: rgba(28, 28, 30, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  /* 🔄 毛玻璃 - 深色模式 */
+  --glass-bg: rgba(28, 28, 30, 0.72);
+  --glass-bg-strong: rgba(28, 28, 30, 0.88);
+  --glass-border: rgba(255, 255, 255, 0.10);
   
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  /* ✨ 动态渐变 - 深色模式 */
+  --gradient-accent: linear-gradient(135deg, #30d158 0%, #34c759 50%, #5ad67d 100%);
+  --gradient-accent-animated: linear-gradient(
+    -45deg,
+    #30d158,
+    #34c759,
+    #5ad67d,
+    #32b857,
+    #30d158
+  );
+  
+  /* 🔄 阴影 - 深色模式 */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
   --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
+  
+  /* ✨ 重点色阴影 - 深色模式 */
+  --shadow-accent: 0 8px 32px rgba(48, 209, 88, 0.35);
+  --shadow-accent-hover: 0 12px 40px rgba(48, 209, 88, 0.45);
+}
+
+/* ✨ ==================== 动画定义 ==================== */
+
+/* 渐变荡漾动画 */
+@keyframes gradientWave {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* 微光闪烁动画 */
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* 呼吸发光动画 */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: var(--shadow-accent);
+  }
+  50% {
+    box-shadow: var(--shadow-accent-hover);
+  }
+}
+
+/* 淡入动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 滑入动画 */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
