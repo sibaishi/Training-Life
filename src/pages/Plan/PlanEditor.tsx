@@ -1,4 +1,3 @@
-// src/pages/Plan/PlanEditor.tsx（完整替换）
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppState } from '../../contexts/AppContext';
@@ -146,7 +145,7 @@ export default function PlanEditor() {
     setHasUnsavedChanges(true);
   };
 
-const handleSave = () => {
+  const handleSave = () => {
     if (!planName.trim() || !totalWeeks) {
       alert('请先完成基础信息设置');
       setShowBasicInfoModal(true);
@@ -192,22 +191,23 @@ const handleSave = () => {
     navigate(`/plan/${newPlanId}`);
   };
 
-const handleExit = () => {
-  if (hasUnsavedChanges) {
-    const confirmMessage = '有未保存的修改，是否退出？\n\n点击"确定"退出（不保存）\n点击"取消"留在编辑页';
-    if (!window.confirm(confirmMessage)) {
-      return;
+  // ✨ 退出时根据是否有 planId 返回不同页面
+  const handleExit = () => {
+    if (hasUnsavedChanges) {
+      const confirmMessage = '有未保存的修改，是否退出？\n\n点击"确定"退出（不保存）\n点击"取消"留在编辑页';
+      if (!window.confirm(confirmMessage)) {
+        return;
+      }
     }
-  }
-  setIsEditing(false);
-  
-  // ✨ 如果是编辑现有计划，返回该计划的查看页
-  if (planId) {
-    navigate(`/plan/${planId}`);
-  } else {
-    navigate('/plan?tab=all');
-  }
-};
+    setIsEditing(false);
+    
+    // 如果是编辑现有计划，返回该计划的查看页
+    if (planId) {
+      navigate(`/plan/${planId}`);
+    } else {
+      navigate('/plan?tab=all');
+    }
+  };
 
   return (
     <div className={editorStyles.page}>
