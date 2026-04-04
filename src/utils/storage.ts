@@ -2,11 +2,44 @@ import { AppState, Plan, Weekday } from '../types';
 
 const STORAGE_KEY = 'training-life-app';
 
+/**
+ * 兼容旧数据：补齐 profile 锁定字段，并推断锁定状态
+ * - 只要 gender/height 已经有值，就默认锁死（除非清缓存）
+ * - baseline 只要出现过值/历史/更新日期/切换日期，就默认锁死
+ */
+export function normalizeState(state: AppState): AppState {
+  const profile = state.profile ?? {};
+  const baselineHistory = Array.isArray(state.baselineHistory) ? state.baselineHistory : [];
+
+  const genderLocked = profile.genderLocked ?? profile.gender !== undefined;
+  const heightLocked = profile.heightLocked ?? profile.height !== undefined;
+
+  const inferredBaselineLocked =
+    profile.baselineLocked === true ||
+    profile.baselineUpdatedAt !== undefined ||
+    profile.baselineWeight !== undefined ||
+    profile.baselineBodyFat !== undefined ||
+    baselineHistory.length > 0 ||
+    state.lastPlanSwitchDate !== null;
+
+  return {
+    ...state,
+    baselineHistory,
+    profile: {
+      ...profile,
+      genderLocked,
+      heightLocked,
+      baselineLocked: profile.baselineLocked ?? inferredBaselineLocked,
+    },
+  };
+}
+
 export function loadState(): AppState | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    return JSON.parse(raw) as AppState;
+    const parsed = JSON.parse(raw) as AppState;
+    return normalizeState(parsed);
   } catch {
     return null;
   }
@@ -22,7 +55,6 @@ export function saveState(state: AppState): void {
 
 function createDefaultPlan(): Plan {
   const planId = 'default-plan-001';
-  
   return {
     id: planId,
     name: '示例训练计划',
@@ -44,9 +76,7 @@ function createDefaultPlan(): Plan {
           { id: 'ex4', name: '绳索下压', sets: 3, reps: 12, restSeconds: 45, isSuperSet: false },
           { id: 'ex5', name: '仰卧臂屈伸', sets: 3, reps: 10, restSeconds: 45, isSuperSet: false },
         ],
-        cardio: [
-          { id: 'c1', name: '跑步机', durationMinutes: 20 },
-        ],
+        cardio: [{ id: 'c1', name: '跑步机', durationMinutes: 20 }],
       },
       3: {
         primary: [
@@ -70,9 +100,7 @@ function createDefaultPlan(): Plan {
           { id: 'ex14', name: '侧平举', sets: 3, reps: 15, restSeconds: 45, isSuperSet: false },
           { id: 'ex15', name: '腿弯举', sets: 3, reps: 12, restSeconds: 60, isSuperSet: false },
         ],
-        cardio: [
-          { id: 'c2', name: '椭圆机', durationMinutes: 15 },
-        ],
+        cardio: [{ id: 'c2', name: '椭圆机', durationMinutes: 15 }],
       },
     },
     trainingDayDiet: {
@@ -100,9 +128,7 @@ function createDefaultPlan(): Plan {
           { id: 'f12', name: '三文鱼', quantity: 150, unitCategory: 'weight', displayUnit: 'g' },
           { id: 'f13', name: '蔬菜沙拉', quantity: 150, unitCategory: 'weight', displayUnit: 'g' },
         ],
-        beforeBed: [
-          { id: 'f14', name: '酪蛋白', quantity: 1, unitCategory: 'count', displayUnit: '勺' },
-        ],
+        beforeBed: [{ id: 'f14', name: '酪蛋白', quantity: 1, unitCategory: 'count', displayUnit: '勺' }],
       },
     },
     restDayDiet: {
@@ -118,9 +144,7 @@ function createDefaultPlan(): Plan {
           { id: 'rf5', name: '牛肉', quantity: 120, unitCategory: 'weight', displayUnit: 'g' },
           { id: 'rf6', name: '蔬菜', quantity: 150, unitCategory: 'weight', displayUnit: 'g' },
         ],
-        snack: [
-          { id: 'rf7', name: '水果', quantity: 200, unitCategory: 'weight', displayUnit: 'g' },
-        ],
+        snack: [{ id: 'rf7', name: '水果', quantity: 200, unitCategory: 'weight', displayUnit: 'g' }],
         dinner: [
           { id: 'rf8', name: '杂粮饭', quantity: 120, unitCategory: 'weight', displayUnit: 'g' },
           { id: 'rf9', name: '鱼肉', quantity: 120, unitCategory: 'weight', displayUnit: 'g' },
@@ -158,7 +182,6 @@ function createDefaultPlan(): Plan {
 
 export function getDefaultState(): AppState {
   const defaultPlan = createDefaultPlan();
-  
   return {
     currentPlanId: defaultPlan.id,
     pendingPlanId: null,
@@ -169,7 +192,11 @@ export function getDefaultState(): AppState {
     planRecords: {},
     customChecklist: [],
     groceries: [],
-    profile: {},
+    profile: {
+      genderLocked: false,
+      heightLocked: false,
+      baselineLocked: false,
+    },
     baselineHistory: [],
     theme: 'system',
   };
