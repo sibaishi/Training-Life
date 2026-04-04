@@ -18,12 +18,12 @@ export default function Settings() {
 
   const genderLocked = profile.genderLocked === true;
   const heightLocked = profile.heightLocked === true;
-  const baselineLocked = profile.baselineLocked === true;
+  const baselineLocked = profile.baselineSetManually === true;  // ← 修改这里
 
   // 身高草稿：避免你输入一半就触发逻辑
   const [heightDraft, setHeightDraft] = useState(profile.height !== undefined ? String(profile.height) : '');
 
-  // 基线草稿：通过按钮“保存并锁定”
+  // 基线草稿：通过按钮"保存并锁定"
   const [baselineWeightDraft, setBaselineWeightDraft] = useState(
     profile.baselineWeight !== undefined ? String(profile.baselineWeight) : ''
   );
@@ -31,7 +31,7 @@ export default function Settings() {
     profile.baselineBodyFat !== undefined ? String(profile.baselineBodyFat) : ''
   );
 
-  // 如果导入/清空后 profile 变化，同步草稿
+  // 如果导入/清空后 profile 变化,同步草稿
   useEffect(() => {
     setHeightDraft(profile.height !== undefined ? String(profile.height) : '');
   }, [profile.height]);
@@ -45,7 +45,7 @@ export default function Settings() {
   const handleSetGenderOnce = (value: string) => {
     if (genderLocked) return;
 
-    // 允许“未设置”保持空（不锁）
+    // 允许"未设置"保持空（不锁）
     if (!value) {
       setState(prev => ({ ...prev, profile: { ...prev.profile, gender: undefined } }));
       return;
@@ -111,7 +111,7 @@ export default function Settings() {
       return;
     }
 
-    const today = getTodayString();
+    const today = new Date().toISOString();  // ← 修改这里
 
     setState(prev => ({
       ...prev,
@@ -119,7 +119,7 @@ export default function Settings() {
         ...prev.profile,
         baselineWeight: w,
         baselineBodyFat: bf,
-        baselineLocked: true,
+        baselineSetManually: true,  // ← 修改这里
         baselineUpdatedAt: prev.profile.baselineUpdatedAt ?? today,
       },
     }));
