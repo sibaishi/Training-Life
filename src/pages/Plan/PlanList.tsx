@@ -621,7 +621,7 @@ export default function PlanList() {
           当天计划
         </button>
         <button
-          className={`${styles.tab} ${activeTab as string === 'all' ? styles.active : ''}`}
+          className={`${styles.tab} ${activeTab === 'all' ? styles.active : ''}`}
           onClick={() => setActiveTab('all')}
         >
           完整计划
