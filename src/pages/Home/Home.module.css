@@ -3,21 +3,12 @@
   background: var(--color-bg);
 }
 
-/* ==================== 头部 ==================== */
-.header {
-  padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-md);
-}
-
-.pageTitle {
-  font-size: var(--font-3xl);
-  font-weight: var(--weight-bold);
-  color: var(--color-text-primary);
-  letter-spacing: -0.02em;
-}
+/* ✨ 移除了 .header 和 .pageTitle */
 
 /* ==================== 内容区 ==================== */
 .content {
-  padding: 0 var(--spacing-lg);
+  padding: var(--spacing-lg);
+  padding-top: var(--spacing-xl);
   padding-bottom: var(--spacing-lg);
 }
 
@@ -93,23 +84,76 @@
   background: rgba(0, 0, 0, 0.06);
 }
 
-/* ==================== 日期卡片 ==================== */
+/* ==================== 日期卡片 - 动态渐变 ==================== */
 .dateCard {
+  position: relative;
+  margin-bottom: var(--spacing-md);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  overflow: hidden;
+  
+  /* ✨ 动态渐变背景 */
+  background: var(--gradient-accent-animated);
+  background-size: 400% 400%;
+  animation: gradientWave 8s ease-in-out infinite;
+  box-shadow: var(--shadow-accent);
+  
+  transition: transform var(--transition-fast), box-shadow var(--transition-normal);
+}
+
+/* ✨ 微光层 */
+.dateCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0.15) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ✨ 动态光斑层 */
+.dateCard::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 60%
+  );
+  animation: shimmer 6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dateCard:active {
+  transform: scale(0.98);
+}
+
+.dateCard:hover {
+  box-shadow: var(--shadow-accent-hover);
+}
+
+/* ✨ 确保内容在最上层 */
+.dateCardContent {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-lg) var(--spacing-xl);
-  margin-bottom: var(--spacing-md);
-  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
-  border-radius: var(--radius-lg);
   color: white;
-  cursor: pointer;
-  transition: transform var(--transition-fast), box-shadow var(--transition-normal);
-  box-shadow: 0 4px 16px rgba(52, 199, 89, 0.25);
-}
-
-.dateCard:active {
-  transform: scale(0.97);
 }
 
 .dateMain {
@@ -141,14 +185,39 @@
 
 /* ==================== 通用卡片 - 毛玻璃效果 ==================== */
 .card {
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-lg);
+  position: relative;
   margin-bottom: var(--spacing-md);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border);
+  padding: var(--spacing-lg);
   cursor: pointer;
+  overflow: hidden;
+  
+  /* ✨ 毛玻璃效果 */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  
   transition: transform var(--transition-fast), box-shadow var(--transition-normal);
+}
+
+/* ✨ 噪点纹理层 */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+/* ✨ 确保内容在噪点层之上 */
+.card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .card:active {
@@ -206,7 +275,7 @@
 
 .planProgressFill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-hover));
+  background: var(--gradient-accent);
   border-radius: var(--radius-full);
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -297,7 +366,7 @@
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-hover));
+  background: var(--gradient-accent);
   border-radius: var(--radius-full);
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -430,7 +499,7 @@
   flex: 1;
 }
 
-/* 图例 */
+/* 图例 - 毛玻璃效果 */
 .chartLegend {
   display: flex;
   justify-content: space-around;
