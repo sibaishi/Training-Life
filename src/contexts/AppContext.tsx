@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+
 import { AppState } from '../types';
 import { loadState, saveState, getDefaultState } from '../utils/storage';
 import { getTodayString } from '../utils/date';
@@ -16,21 +17,21 @@ const AppContext = createContext<AppContextValue | null>(null);
 // 检查并执行待生效计划切换
 function checkAndSwitchPlan(state: AppState): AppState {
   const today = getTodayString();
-  
+
   // 如果没有待生效计划，直接返回
   if (!state.pendingPlanId || !state.pendingPlanDate) {
     return state;
   }
-  
+
   // 如果还没到生效日期，直接返回
   if (today < state.pendingPlanDate) {
     return state;
   }
-  
+
   // 执行计划切换
   const currentPlan = state.plans.find(p => p.id === state.currentPlanId);
   const pendingPlan = state.plans.find(p => p.id === state.pendingPlanId);
-  
+
   if (!pendingPlan) {
     // 待生效计划不存在（可能被删除了），清空待生效状态
     return {
@@ -39,7 +40,7 @@ function checkAndSwitchPlan(state: AppState): AppState {
       pendingPlanDate: null,
     };
   }
-  
+
   // 获取最新的身体数据作为新基线
   const getLatestBodyData = () => {
     const dates = Object.keys(state.checkins).sort().reverse();
@@ -54,9 +55,10 @@ function checkAndSwitchPlan(state: AppState): AppState {
     }
     return { weight: undefined, bodyFat: undefined };
   };
-  
+
   const latestBody = getLatestBodyData();
-  
+  const hasNewBody = latestBody.weight !== undefined || latestBody.bodyFat !== undefined;
+
   // 记录基线历史
   const newHistoryEntry = {
     date: today,
@@ -65,24 +67,29 @@ function checkAndSwitchPlan(state: AppState): AppState {
     previousWeight: state.profile.baselineWeight,
     previousBodyFat: state.profile.baselineBodyFat,
   };
-  
+
   // 返回更新后的状态
   return {
     ...state,
     // 切换当前计划
     currentPlanId: state.pendingPlanId,
+
     // 清空待生效状态
     pendingPlanId: null,
     pendingPlanDate: null,
+
     // 记录切换时间
     lastPlanSwitchDate: today,
-    // 更新基线数据
+
+    // 更新基线数据（并强制锁定 baseline）
     profile: {
       ...state.profile,
+      baselineLocked: true,
       baselineWeight: latestBody.weight ?? state.profile.baselineWeight,
       baselineBodyFat: latestBody.bodyFat ?? state.profile.baselineBodyFat,
-      baselineUpdatedAt: today,
+      baselineUpdatedAt: hasNewBody ? today : state.profile.baselineUpdatedAt,
     },
+
     // 添加历史记录
     baselineHistory: [newHistoryEntry, ...state.baselineHistory],
   };
@@ -94,6 +101,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     // 启动时检查是否需要切换计划
     return checkAndSwitchPlan(loaded);
   });
+
   const [isEditing, setIsEditing] = useState(false);
 
   const save = useCallback(() => {
@@ -120,13 +128,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     // 每分钟检查一次（处理跨午夜的情况）
     const interval = setInterval(checkPlanSwitch, 60 * 1000);
-    
+
     // 页面可见性变化时也检查（用户从后台切回来）
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         checkPlanSwitch();
       }
     };
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
@@ -135,11 +144,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  return (
-    <AppContext.Provider value={{ state, setState, save, isEditing, setIsEditing }}>
-      {children}
-    </AppContext.Provider>
-  );
+  return <AppContext.Provider value={{ state, setState, save, isEditing, setIsEditing }}>{children}</AppContext.Provider>;
 }
 
 export function useAppState(): AppContextValue {
