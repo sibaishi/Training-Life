@@ -563,3 +563,36 @@
 .mealBody {
   padding: 0 var(--spacing-md) var(--spacing-md);
 }
+
+/* 计划信息 */
+.planInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.planName {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.historicalBadge {
+  font-size: 12px;
+  padding: 2px 8px;
+  background: var(--warning-bg, #fef3c7);
+  color: var(--warning-text, #92400e);
+  border-radius: 4px;
+}
+
+/* 未来日期提示 */
+.futureHint {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: var(--info-bg, #dbeafe);
+  color: var(--info-text, #1e40af);
+  border-radius: 8px;
+  font-size: 13px;
+  text-align: center;
+}
