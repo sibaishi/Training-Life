@@ -3,10 +3,62 @@
   background: var(--color-bg);
 }
 
+/* ==================== 头部 - 动态渐变圆角卡片 ==================== */
 .header {
-  background: var(--color-accent);
+  position: relative;
+  margin: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
   padding: var(--spacing-lg);
   color: white;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  
+  /* 动态渐变背景 */
+  background: var(--gradient-accent-animated);
+  background-size: 400% 400%;
+  animation: gradientWave 8s ease-in-out infinite;
+  box-shadow: var(--shadow-accent);
+}
+
+/* 边缘羽化高光层 */
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    rgba(255, 255, 255, 0.18) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 动态光斑层 */
+.header::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 50%
+  );
+  animation: shimmer 6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 确保内容在最上层 */
+.header > * {
+  position: relative;
+  z-index: 2;
 }
 
 .dateNav {
@@ -29,10 +81,14 @@
   border: none;
   border-radius: var(--radius-full);
   cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all var(--transition-fast);
 }
 
 .dateNavBtn:active {
   background: rgba(255, 255, 255, 0.3);
+  transform: scale(0.9);
 }
 
 .dateCenter {
@@ -58,8 +114,32 @@
 .todayBadge {
   padding: 2px var(--spacing-sm);
   font-size: var(--font-xs);
-  background: rgba(255, 255, 255, 0.3);
+  font-weight: var(--weight-semibold);
+  background: rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-full);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.planInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin: var(--spacing-sm) 0;
+}
+
+.planName {
+  font-size: var(--font-sm);
+  opacity: 0.85;
+}
+
+.historicalBadge {
+  font-size: var(--font-xs);
+  padding: 2px var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-full);
+  font-weight: var(--weight-medium);
 }
 
 .dayTypes {
@@ -71,8 +151,11 @@
 .dayTypeBadge {
   padding: var(--spacing-xs) var(--spacing-sm);
   font-size: var(--font-xs);
-  background: rgba(255, 255, 255, 0.2);
+  font-weight: var(--weight-medium);
+  background: rgba(255, 255, 255, 0.18);
   border-radius: var(--radius-full);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .backToTodayBtn {
@@ -83,28 +166,68 @@
   font-size: var(--font-sm);
   font-weight: var(--weight-medium);
   color: white;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-sm);
   cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all var(--transition-fast);
 }
 
 .backToTodayBtn:active {
   background: rgba(255, 255, 255, 0.3);
+  transform: scale(0.98);
 }
 
+.futureHint {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-sm);
+  text-align: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ==================== 内容区 ==================== */
 .content {
-  padding: var(--spacing-lg);
+  padding: 0 var(--spacing-lg);
   padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + var(--spacing-3xl));
 }
 
-/* 进度卡 */
+/* ==================== 进度卡 - 毛玻璃 ==================== */
 .progressCard {
-  background: var(--color-surface);
-  border-radius: var(--radius-md);
+  position: relative;
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
+  overflow: hidden;
+  
+  /* 毛玻璃效果 */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
+}
+
+/* 噪点纹理层 */
+.progressCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+.progressCard > * {
+  position: relative;
+  z-index: 1;
 }
 
 .progressHeader {
@@ -128,25 +251,49 @@
 
 .progressBar {
   height: 8px;
-  background: var(--color-border);
+  background: var(--color-divider);
   border-radius: var(--radius-full);
   overflow: hidden;
 }
 
 .progressFill {
   height: 100%;
-  background: var(--color-accent);
+  background: var(--gradient-accent);
   border-radius: var(--radius-full);
-  transition: width 0.3s;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 通用卡片 */
+/* ==================== 通用卡片 - 毛玻璃 ==================== */
 .card {
-  background: var(--color-surface);
-  border-radius: var(--radius-md);
+  position: relative;
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
+  overflow: hidden;
+  
+  /* 毛玻璃效果 */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
+}
+
+/* 噪点纹理层 */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+.card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .cardHeader {
@@ -160,19 +307,19 @@
   font-size: var(--font-base);
   font-weight: var(--weight-semibold);
   color: var(--color-text-primary);
-  margin-bottom: var(--spacing-md);
 }
 
-/* 饮水卡 */
+/* ==================== 饮水卡 ==================== */
 .waterStats {
   font-size: var(--font-sm);
-  font-weight: var(--weight-medium);
-  color: var(--color-accent);
+  font-weight: var(--weight-semibold);
+  color: var(--color-info);
+  font-variant-numeric: tabular-nums;
 }
 
 .waterProgressBar {
   height: 8px;
-  background: var(--color-border);
+  background: var(--color-divider);
   border-radius: var(--radius-full);
   overflow: hidden;
   margin-bottom: var(--spacing-md);
@@ -180,9 +327,9 @@
 
 .waterProgressFill {
   height: 100%;
-  background: var(--color-info);
+  background: linear-gradient(90deg, #64b5f6, #2196f3);
   border-radius: var(--radius-full);
-  transition: width 0.3s;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .waterActions {
@@ -196,14 +343,16 @@
   font-size: var(--font-sm);
   font-weight: var(--weight-medium);
   color: var(--color-info);
-  background: rgba(59, 130, 246, 0.1);
+  background: var(--color-info-bg);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: all var(--transition-fast);
 }
 
 .waterQuickBtn:active {
   opacity: 0.7;
+  transform: scale(0.95);
 }
 
 .waterCustomBtn {
@@ -211,10 +360,15 @@
   font-size: var(--font-sm);
   font-weight: var(--weight-medium);
   color: var(--color-text-secondary);
-  background: var(--color-bg);
+  background: var(--color-surface-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.waterCustomBtn:active {
+  transform: scale(0.95);
 }
 
 .waterInputRow {
@@ -227,27 +381,35 @@
   flex: 1;
   padding: var(--spacing-sm) var(--spacing-md);
   font-size: var(--font-base);
-  background: var(--color-bg);
+  background: var(--color-surface-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
+  transition: border-color var(--transition-fast);
 }
 
 .waterInput:focus {
   border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
 }
 
 .waterAddBtn {
   padding: var(--spacing-sm) var(--spacing-lg);
   font-size: var(--font-base);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-semibold);
   color: white;
-  background: var(--color-info);
+  background: var(--gradient-accent);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
+  box-shadow: var(--shadow-accent);
+  transition: all var(--transition-fast);
 }
 
-/* 固定项 */
+.waterAddBtn:active {
+  transform: scale(0.95);
+}
+
+/* ==================== 固定项 ==================== */
 .fixedItemsGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -261,8 +423,8 @@
   align-items: center;
   gap: var(--spacing-sm);
   padding: var(--spacing-md);
-  background: var(--color-bg);
-  border-radius: var(--radius-sm);
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-md);
 }
 
 .fixedItemLabel {
@@ -276,20 +438,28 @@
   font-size: var(--font-lg);
   font-weight: var(--weight-semibold);
   text-align: center;
-  background: var(--color-surface);
+  background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
+  font-variant-numeric: tabular-nums;
+  transition: border-color var(--transition-fast);
 }
 
 .fixedItemInput:focus {
   border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.sleepItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
 }
 
 .sleepRow {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  margin-top: var(--spacing-sm);
 }
 
 .sleepInput {
@@ -298,45 +468,51 @@
   font-size: var(--font-lg);
   font-weight: var(--weight-semibold);
   text-align: center;
-  background: var(--color-bg);
+  background: var(--color-surface-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
+  font-variant-numeric: tabular-nums;
+  transition: border-color var(--transition-fast);
 }
 
 .sleepInput:focus {
   border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
 }
 
 .sleepTarget {
   font-size: var(--font-sm);
-  color: var(--color-text-tertiary);
+  color: var(--color-text-secondary);
 }
 
 .sleepProgressBar {
   height: 6px;
-  background: var(--color-border);
+  background: var(--color-divider);
   border-radius: var(--radius-full);
   overflow: hidden;
-  margin-top: var(--spacing-md);
 }
 
 .sleepProgressFill {
   height: 100%;
-  background: var(--color-success);
   border-radius: var(--radius-full);
-  transition: width 0.3s;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 执行清单 */
+/* ==================== 执行清单 ==================== */
 .addCustomBtn {
   padding: var(--spacing-xs) var(--spacing-md);
   font-size: var(--font-sm);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-semibold);
   color: var(--color-accent);
-  background: var(--color-accent-light);
+  background: var(--color-accent-soft);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.addCustomBtn:active {
+  transform: scale(0.95);
 }
 
 .emptyHint {
@@ -357,10 +533,10 @@
   align-items: center;
   gap: var(--spacing-md);
   padding: var(--spacing-md);
-  background: var(--color-bg);
-  border-radius: var(--radius-sm);
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
 }
 
 .checklistItem:active {
@@ -375,6 +551,11 @@
   text-decoration: line-through;
 }
 
+.checklistItemDisabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
 .checklistCheck {
   width: 24px;
   height: 24px;
@@ -383,9 +564,10 @@
   justify-content: center;
   font-size: var(--font-base);
   color: var(--color-text-tertiary);
-  background: var(--color-surface);
+  background: var(--color-bg);
   border: 2px solid var(--color-border);
   border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
 }
 
 .checklistItemDone .checklistCheck {
@@ -403,6 +585,7 @@
 
 .checklistName {
   font-size: var(--font-base);
+  font-weight: var(--weight-medium);
   color: var(--color-text-primary);
 }
 
@@ -414,19 +597,22 @@
 .customBadge {
   padding: 2px var(--spacing-sm);
   font-size: var(--font-xs);
+  font-weight: var(--weight-medium);
   color: var(--color-accent);
-  background: var(--color-accent-light);
+  background: var(--color-accent-soft);
   border-radius: var(--radius-full);
 }
 
-/* 弹窗 */
+/* ==================== 弹窗 - 毛玻璃 ==================== */
 .modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -435,11 +621,17 @@
 }
 
 .modal {
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
   width: 100%;
   max-width: 400px;
   overflow: hidden;
+  
+  /* 毛玻璃效果 */
+  background: var(--glass-bg-strong);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
 }
 
 .modalHeader {
@@ -467,6 +659,11 @@
   border: none;
   border-radius: var(--radius-full);
   cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.modalCloseBtn:hover {
+  background: var(--color-surface-secondary);
 }
 
 .modalBody {
@@ -493,13 +690,15 @@
   width: 100%;
   padding: var(--spacing-md);
   font-size: var(--font-base);
-  background: var(--color-bg);
+  background: var(--color-surface-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
+  transition: border-color var(--transition-fast);
 }
 
 .formInput:focus {
   border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
 }
 
 .daySelector {
@@ -513,16 +712,22 @@
   font-size: var(--font-sm);
   font-weight: var(--weight-medium);
   color: var(--color-text-secondary);
-  background: var(--color-bg);
+  background: var(--color-surface-secondary);
   border: 2px solid var(--color-border);
   border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.dayBtn:active {
+  transform: scale(0.92);
 }
 
 .dayBtnActive {
   color: white;
-  background: var(--color-accent);
+  background: var(--gradient-accent);
   border-color: var(--color-accent);
+  box-shadow: var(--shadow-accent);
 }
 
 .modalFooter {
@@ -536,60 +741,33 @@
   flex: 1;
   padding: var(--spacing-md);
   font-size: var(--font-base);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-semibold);
   color: var(--color-text-primary);
-  background: var(--color-bg);
+  background: var(--color-surface-secondary);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.modalCancelBtn:active {
+  transform: scale(0.97);
 }
 
 .modalConfirmBtn {
   flex: 1;
   padding: var(--spacing-md);
   font-size: var(--font-base);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-semibold);
   color: white;
-  background: var(--color-accent);
+  background: var(--gradient-accent);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
+  box-shadow: var(--shadow-accent);
+  transition: all var(--transition-fast);
 }
 
-/* 计划信息 */
-.planInfo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin: 8px 0;
-}
-
-.planName {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
-.historicalBadge {
-  font-size: 12px;
-  padding: 2px 8px;
-  background: var(--warning-bg, #fef3c7);
-  color: var(--warning-text, #92400e);
-  border-radius: 4px;
-}
-
-/* 未来日期提示 */
-.futureHint {
-  margin: 8px 16px;
-  padding: 8px 12px;
-  background: var(--info-bg, #dbeafe);
-  color: var(--info-text, #1e40af);
-  border-radius: 8px;
-  font-size: 13px;
-  text-align: center;
-}
-
-/* 禁用状态的清单项 */
-.checklistItemDisabled {
-  opacity: 0.6;
+.modalConfirmBtn:active {
+  transform: scale(0.97);
 }
