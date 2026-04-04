@@ -6,13 +6,11 @@ import styles from './CheckinCalendar.module.css';
 
 export default function CheckinCalendar() {
   const navigate = useNavigate();
-  const { state } = useAppState();
+  const { state, getPlanForDate } = useAppState();
   const [currentMonth, setCurrentMonth] = useState(() => {
     const today = new Date();
     return { year: today.getFullYear(), month: today.getMonth() };
   });
-
-  const currentPlan = state.plans.find(p => p.id === state.currentPlanId);
 
   const handlePrevMonth = () => {
     setCurrentMonth(prev => {
@@ -33,7 +31,6 @@ export default function CheckinCalendar() {
   };
 
   const handleDateClick = (dateStr: string) => {
-    // 跳转到打卡页并传递日期
     navigate(`/checkin?date=${dateStr}`);
   };
 
@@ -83,11 +80,14 @@ export default function CheckinCalendar() {
     return days;
   };
 
-  // 获取日期状态
+  // 获取日期状态（使用当天对应的计划）
   const getDateStatus = (dateStr: string) => {
     const checkin = state.checkins[dateStr];
     const weekday = getWeekday(dateStr);
-    const isTrainingDay = currentPlan?.trainingDays.includes(weekday) || false;
+    
+    // ========== 关键修改：根据日期获取对应的计划 ==========
+    const datePlan = getPlanForDate(dateStr);
+    const isTrainingDay = datePlan?.trainingDays.includes(weekday) || false;
     
     const markers: string[] = [];
     
