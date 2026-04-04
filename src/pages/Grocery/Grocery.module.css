@@ -3,22 +3,13 @@
   background: var(--color-bg);
 }
 
-.header {
+.content {
   padding: var(--spacing-lg);
   padding-top: var(--spacing-xl);
-}
-
-.pageTitle {
-  font-size: var(--font-2xl);
-  font-weight: var(--weight-bold);
-  color: var(--color-text-primary);
-}
-
-.content {
-  padding: 0 var(--spacing-lg);
   padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + var(--spacing-3xl));
 }
 
+/* ==================== 空状态 ==================== */
 .emptyState {
   display: flex;
   flex-direction: column;
@@ -37,31 +28,122 @@
   font-size: var(--font-base);
 }
 
+/* ==================== 顶部信息卡 - 重点色动态渐变 ==================== */
 .infoCard {
-  background: var(--color-surface);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-lg);
+  position: relative;
   margin-bottom: var(--spacing-lg);
-  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--gradient-accent-animated);
+  background-size: 400% 400%;
+  animation: gradientWave 8s ease-in-out infinite;
+  box-shadow: var(--shadow-accent);
 }
 
-.infoRow {
+.infoCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    rgba(255, 255, 255, 0.18) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.infoCard::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 50%
+  );
+  animation: shimmer 6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.infoCardInner {
+  position: relative;
+  z-index: 2;
+  padding: var(--spacing-lg);
+  color: white;
+}
+
+.infoTop {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
 }
 
-.infoLabel {
-  font-size: var(--font-sm);
-  color: var(--color-text-secondary);
-}
-
-.infoValue {
-  font-size: var(--font-base);
+.infoTag {
+  padding: 4px 10px;
+  font-size: var(--font-xs);
   font-weight: var(--weight-semibold);
-  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
+.infoRate {
+  font-size: var(--font-xl);
+  font-weight: var(--weight-bold);
+}
+
+.infoMain {
+  margin-bottom: var(--spacing-lg);
+}
+
+.infoPlanName {
+  font-size: var(--font-lg);
+  font-weight: var(--weight-bold);
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.infoDateRange {
+  font-size: var(--font-sm);
+  opacity: 0.9;
+}
+
+.infoStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-sm);
+}
+
+.infoStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.infoStatValue {
+  font-size: var(--font-base);
+  font-weight: var(--weight-bold);
+}
+
+.infoStatLabel {
+  font-size: var(--font-xs);
+  opacity: 0.9;
+}
+
+/* ==================== 列表 ==================== */
 .itemList {
   display: flex;
   flex-direction: column;
@@ -69,15 +151,37 @@
   margin-bottom: var(--spacing-lg);
 }
 
+/* ==================== 食材卡片 - 毛玻璃 ==================== */
 .itemCard {
-  background: var(--color-surface);
-  border-radius: var(--radius-md);
+  position: relative;
   padding: var(--spacing-md) var(--spacing-lg);
+  overflow: hidden;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
 }
 
+.itemCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+.itemCard > * {
+  position: relative;
+  z-index: 1;
+}
+
 .itemCardDone {
-  opacity: 0.7;
+  opacity: 0.72;
 }
 
 .itemHeader {
@@ -98,14 +202,14 @@
   font-weight: var(--weight-medium);
   color: var(--color-accent);
   padding: var(--spacing-xs) var(--spacing-sm);
-  background: var(--color-accent-light);
+  background: var(--color-accent-soft);
   border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
 .itemProgressBar {
   height: 6px;
-  background: var(--color-border);
+  background: var(--color-divider);
   border-radius: var(--radius-full);
   overflow: hidden;
   margin-bottom: var(--spacing-sm);
@@ -113,19 +217,21 @@
 
 .itemProgressFill {
   height: 100%;
-  background: var(--color-accent);
+  background: var(--gradient-accent);
   border-radius: var(--radius-full);
   transition: width 0.3s;
 }
 
 .itemProgressDone {
-  background: var(--color-success);
+  background: linear-gradient(90deg, #34c759, #30d158);
 }
 
 .itemFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
 }
 
 .itemPurchased {
@@ -133,7 +239,7 @@
   color: var(--color-accent);
   cursor: pointer;
   padding: var(--spacing-xs) var(--spacing-sm);
-  background: var(--color-accent-light);
+  background: var(--color-accent-soft);
   border-radius: var(--radius-sm);
 }
 
@@ -142,10 +248,12 @@
   color: var(--color-text-secondary);
 }
 
+/* ==================== 编辑态 ==================== */
 .editRow {
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
+  flex-wrap: wrap;
 }
 
 .editLabel {
@@ -158,9 +266,13 @@
   padding: var(--spacing-xs) var(--spacing-sm);
   font-size: var(--font-sm);
   text-align: center;
-  background: var(--color-bg);
+  background: var(--color-surface-secondary);
   border: 1px solid var(--color-accent);
   border-radius: var(--radius-sm);
+}
+
+.editInput:focus {
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
 }
 
 .editUnit {
@@ -176,7 +288,7 @@
   justify-content: center;
   font-size: var(--font-sm);
   color: var(--color-success);
-  background: rgba(16, 185, 129, 0.1);
+  background: var(--color-success-bg);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -190,17 +302,39 @@
   justify-content: center;
   font-size: var(--font-sm);
   color: var(--color-danger);
-  background: rgba(239, 68, 68, 0.1);
+  background: var(--color-danger-bg);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
 }
 
+/* ==================== 底部摘要 - 毛玻璃 ==================== */
 .summary {
-  background: var(--color-surface);
-  border-radius: var(--radius-md);
+  position: relative;
   padding: var(--spacing-lg);
+  overflow: hidden;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
+}
+
+.summary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+.summary > * {
+  position: relative;
+  z-index: 1;
 }
 
 .summaryRow {
@@ -210,7 +344,7 @@
   padding: var(--spacing-sm) 0;
   font-size: var(--font-sm);
   color: var(--color-text-secondary);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-divider);
 }
 
 .summaryRow:last-child {
