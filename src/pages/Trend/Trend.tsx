@@ -34,26 +34,24 @@ export default function Trend() {
   const today = getTodayString();
   const currentPlan = state.plans.find(p => p.id === state.currentPlanId);
 
-  // 获取目标值
   const targetValue = useMemo(() => {
     if (!currentPlan) return undefined;
-    
+
     switch (metric) {
       case 'weight':
         return currentPlan.targetWeight;
       case 'bodyFat':
         return currentPlan.targetBodyFat;
       case 'sleep':
-        return 7.5; // 睡眠目标固定为7.5小时
+        return 7.5;
       default:
         return undefined;
     }
   }, [currentPlan, metric]);
 
   const trendData = useMemo(() => {
-    let days: string[] = [];
-    
-    // 根据时间范围生成日期列表
+    const days: string[] = [];
+
     switch (timeRange) {
       case 'week':
         for (let i = 6; i >= 0; i--) {
@@ -68,7 +66,7 @@ export default function Trend() {
       case 'cycle':
         if (currentPlan) {
           const totalDays = currentPlan.totalWeeks * 7;
-          const limitedDays = Math.min(totalDays, 90); // 最多显示90天
+          const limitedDays = Math.min(totalDays, 90);
           for (let i = limitedDays - 1; i >= 0; i--) {
             days.push(addDays(today, -i));
           }
@@ -80,11 +78,10 @@ export default function Trend() {
         break;
     }
 
-    // 获取数据
     const dataPoints: { date: string; value?: number }[] = days.map(date => {
       const checkin = state.checkins[date];
       let value: number | undefined;
-      
+
       switch (metric) {
         case 'weight':
           value = checkin?.weight;
@@ -96,14 +93,13 @@ export default function Trend() {
           value = checkin?.sleepHours;
           break;
       }
-      
+
       return { date, value };
     });
 
-    // 计算统计数据
     const validValues = dataPoints.filter(d => d.value !== undefined).map(d => d.value!);
     const hasData = validValues.length >= 2;
-    
+
     let min = 0, max = 0, avg = 0, change = 0;
     let trend: 'up' | 'down' | 'stable' | 'none' = 'none';
 
@@ -117,7 +113,7 @@ export default function Trend() {
       const first = validValues[0];
       const last = validValues[validValues.length - 1];
       change = last - first;
-      
+
       if (Math.abs(change) < 0.1) {
         trend = 'stable';
       } else if (change > 0) {
@@ -127,14 +123,13 @@ export default function Trend() {
       }
     }
 
-    // 计算与目标的差距
     let distanceToTarget: number | undefined;
     let targetDirection: 'above' | 'below' | 'reached' | undefined;
-    
+
     if (targetValue !== undefined && validValues.length > 0) {
       const latest = validValues[validValues.length - 1];
       distanceToTarget = latest - targetValue;
-      
+
       if (Math.abs(distanceToTarget) < 0.1) {
         targetDirection = 'reached';
       } else if (distanceToTarget > 0) {
@@ -144,16 +139,14 @@ export default function Trend() {
       }
     }
 
-    // 计算图表的Y轴范围（需要包含目标线）
     let chartMin = min;
     let chartMax = max;
-    
+
     if (targetValue !== undefined && validValues.length > 0) {
       chartMin = Math.min(chartMin, targetValue);
       chartMax = Math.max(chartMax, targetValue);
     }
-    
-    // 添加上下边距
+
     const chartPadding = (chartMax - chartMin) * 0.15 || 1;
     chartMin = chartMin - chartPadding;
     chartMax = chartMax + chartPadding;
@@ -178,34 +171,13 @@ export default function Trend() {
     };
   }, [state.checkins, metric, timeRange, today, currentPlan, targetValue]);
 
-  // 计算数据点的Y坐标（百分比）
   const getChartY = (value: number | undefined): number => {
     if (value === undefined) return 0;
     return ((value - trendData.chartMin) / trendData.chartRange) * 100;
   };
 
-  // 计算目标线的Y坐标
   const targetLineY = targetValue !== undefined ? getChartY(targetValue) : null;
 
-  // 生成折线路径
-  const generatePath = (): string => {
-    const points: { x: number; y: number }[] = [];
-    const padding = 5;
-    const width = 100 - padding * 2;
-    
-    trendData.dataPoints.forEach((point, index) => {
-      if (point.value !== undefined) {
-        const x = padding + (index / (trendData.dataPoints.length - 1)) * width;
-        const y = 100 - getChartY(point.value);
-        points.push({ x, y });
-      }
-    });
-
-    if (points.length < 2) return '';
-    return points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
-  };
-
-  // 计算数据点的X坐标
   const getPointX = (index: number): number => {
     const padding = 5;
     const width = 100 - padding * 2;
@@ -221,21 +193,19 @@ export default function Trend() {
     }
   };
 
-  // 判断趋势是好是坏
   const isTrendGood = () => {
     if (metric === 'sleep') {
-      return trendData.trend === 'up'; // 睡眠增加是好的
+      return trendData.trend === 'up';
     }
-    return trendData.trend === 'down'; // 体重/体脂下降是好的
+    return trendData.trend === 'down';
   };
 
-  // 判断与目标的关系是好是坏
   const isTargetGood = () => {
     if (trendData.targetDirection === 'reached') return true;
     if (metric === 'sleep') {
-      return trendData.targetDirection === 'above'; // 睡眠超过目标是好的
+      return trendData.targetDirection === 'above';
     }
-    return trendData.targetDirection === 'below'; // 体重/体脂低于目标是好的
+    return trendData.targetDirection === 'below';
   };
 
   const formatValue = (value: number): string => {
@@ -248,7 +218,7 @@ export default function Trend() {
         <button className={styles.backBtn} onClick={() => navigate('/')}>
           ← 返回
         </button>
-        <h1 className={styles.headerTitle}>趋势详情</h1>
+        <div className={styles.headerTitle}>趋势详情</div>
         <div className={styles.headerPlaceholder}></div>
       </div>
 
@@ -285,7 +255,7 @@ export default function Trend() {
           </div>
         </div>
 
-        {/* 趋势图表 */}
+        {/* 图表卡片 */}
         <div className={styles.chartCard}>
           <div className={styles.chartHeader}>
             <span className={styles.chartTitle}>
@@ -298,38 +268,29 @@ export default function Trend() {
 
           {trendData.hasData ? (
             <>
-              {/* 图表区域 */}
               <div className={styles.chartWrapper}>
-                {/* Y轴标签 */}
                 <div className={styles.chartYAxis}>
                   <span>{formatValue(trendData.chartMax)}</span>
                   <span>{formatValue((trendData.chartMax + trendData.chartMin) / 2)}</span>
                   <span>{formatValue(trendData.chartMin)}</span>
                 </div>
-                
-                {/* SVG图表 */}
+
                 <div className={styles.chartSvgContainer}>
-                  <svg 
-                    className={styles.chartSvg}
-                    viewBox="0 0 100 50"
-                  >
-                    {/* 网格线 */}
+                  <svg className={styles.chartSvg} viewBox="0 0 100 50">
                     <line x1="5" y1="12.5" x2="95" y2="12.5" className={styles.gridLine} />
                     <line x1="5" y1="25" x2="95" y2="25" className={styles.gridLine} />
                     <line x1="5" y1="37.5" x2="95" y2="37.5" className={styles.gridLine} />
-                    
-                    {/* 目标线 */}
+
                     {targetLineY !== null && (
-                      <line 
-                        x1="5" 
-                        y1={50 - (targetLineY / 100) * 50} 
-                        x2="95" 
-                        y2={50 - (targetLineY / 100) * 50} 
+                      <line
+                        x1="5"
+                        y1={50 - (targetLineY / 100) * 50}
+                        x2="95"
+                        y2={50 - (targetLineY / 100) * 50}
                         className={styles.targetLine}
                       />
                     )}
-                    
-                    {/* 数据折线 */}
+
                     <polyline
                       points={trendData.dataPoints
                         .map((point, index) => {
@@ -344,26 +305,24 @@ export default function Trend() {
                       fill="none"
                     />
 
-                    {/* 数据点 */}
                     {trendData.dataPoints.map((point, index) => {
                       if (point.value === undefined) return null;
                       const x = getPointX(index);
                       const y = 50 - (getChartY(point.value) / 100) * 50;
                       return (
-                        <circle 
+                        <circle
                           key={point.date}
-                          cx={x} 
-                          cy={y} 
-                          r="1" 
-                          className={styles.dataPoint} 
+                          cx={x}
+                          cy={y}
+                          r="1"
+                          className={styles.dataPoint}
                         />
                       );
                     })}
                   </svg>
 
-                  {/* 目标标签 */}
                   {targetLineY !== null && (
-                    <div 
+                    <div
                       className={styles.targetLabel}
                       style={{ bottom: `${(targetLineY / 100) * 100}%` }}
                     >
@@ -373,7 +332,6 @@ export default function Trend() {
                 </div>
               </div>
 
-              {/* X轴标签 */}
               <div className={styles.chartXAxis}>
                 {timeRange === 'week' ? (
                   trendData.dataPoints.map(point => (
@@ -396,18 +354,18 @@ export default function Trend() {
                 )}
               </div>
 
-              {/* 统计摘要 */}
               <div className={styles.chartSummary}>
-                {/* 第一行：基础统计 */}
                 <div className={styles.summaryRow}>
                   <div className={styles.summaryItem}>
                     <span className={styles.summaryIcon}>{getTrendIcon()}</span>
                     <span className={styles.summaryLabel}>变化</span>
-                    <span className={`${styles.summaryValue} ${
-                      trendData.trend !== 'none' && trendData.trend !== 'stable'
-                        ? (isTrendGood() ? styles.good : styles.bad)
-                        : ''
-                    }`}>
+                    <span
+                      className={`${styles.summaryValue} ${
+                        trendData.trend !== 'none' && trendData.trend !== 'stable'
+                          ? (isTrendGood() ? styles.good : styles.bad)
+                          : ''
+                      }`}
+                    >
                       {trendData.trend === 'up' ? '+' : ''}
                       {formatValue(trendData.change)} {METRIC_UNITS[metric]}
                     </span>
@@ -420,8 +378,7 @@ export default function Trend() {
                     </span>
                   </div>
                 </div>
-                
-                {/* 第二行：最高最低 */}
+
                 <div className={styles.summaryRow}>
                   <div className={styles.summaryItem}>
                     <span className={styles.summaryIcon}>⬆️</span>
@@ -439,7 +396,6 @@ export default function Trend() {
                   </div>
                 </div>
 
-                {/* 第三行：与目标对比 */}
                 {targetValue !== undefined && trendData.latest !== undefined && (
                   <div className={styles.targetRow}>
                     <div className={styles.targetInfo}>
@@ -469,7 +425,7 @@ export default function Trend() {
               <div className={styles.emptyHint}>
                 需要至少 2 天的{METRIC_LABELS[metric]}数据才能显示趋势
               </div>
-              <button 
+              <button
                 className={styles.emptyBtn}
                 onClick={() => navigate('/checkin')}
               >
