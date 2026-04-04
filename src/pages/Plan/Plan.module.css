@@ -1,93 +1,110 @@
 .page {
   padding: var(--spacing-lg);
   min-height: 100%;
+  background: var(--color-bg);
 }
 
+/* ==================== 头部 ==================== */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
   padding-top: var(--spacing-lg);
 }
 
 .pageTitle {
-  font-size: var(--font-2xl);
+  font-size: var(--font-3xl);
   font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
 }
 
+/* ==================== 标签栏 ==================== */
 .tabBar {
   display: flex;
-  gap: var(--spacing-lg);
-  margin-bottom: var(--spacing-xl);
-  border-bottom: 2px solid var(--color-border);
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-xs);
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-sm);
 }
 
 .tab {
-  padding: var(--spacing-md) var(--spacing-lg);
-  font-size: var(--font-base);
+  flex: 1;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: var(--font-sm);
   font-weight: var(--weight-medium);
   color: var(--color-text-secondary);
   background: none;
   border: none;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
+  border-radius: var(--radius-xs);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-normal);
+  text-align: center;
 }
 
 .tab.active {
-  color: var(--color-accent);
-  border-bottom-color: var(--color-accent);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  font-weight: var(--weight-semibold);
 }
 
+/* ==================== 新建按钮 ==================== */
 .newButton {
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs);
   padding: var(--spacing-sm) var(--spacing-lg);
   font-size: var(--font-sm);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-semibold);
   color: var(--color-accent);
-  background: var(--color-accent-light);
+  background: var(--color-accent-soft);
   border-radius: var(--radius-full);
   border: none;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: all var(--transition-fast);
 }
 
 .newButton:active {
-  opacity: 0.7;
+  transform: scale(0.95);
+  opacity: 0.8;
 }
 
+/* ==================== 计划卡片 ==================== */
 .planCard {
   background: var(--color-surface);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
   box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
 }
 
 .planCard:active {
   transform: scale(0.98);
+  box-shadow: var(--shadow-md);
 }
 
 .planCard.current {
-  border: 2px solid var(--color-accent);
+  border: 1.5px solid var(--color-accent);
   background: var(--color-accent-light);
 }
 
 .planCard.pending {
-  border: 2px solid var(--color-accent-pending);
-  background: linear-gradient(to right, var(--color-accent-light) 0%, transparent 100%);
+  border: 1.5px solid var(--color-pending);
+  background: var(--color-warning-bg);
 }
 
 .planName {
   font-size: var(--font-lg);
   font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
   margin-bottom: var(--spacing-xs);
+  letter-spacing: -0.01em;
 }
 
 .planMeta {
@@ -95,6 +112,7 @@
   color: var(--color-text-secondary);
 }
 
+/* ==================== 空状态 ==================== */
 .emptyState {
   display: flex;
   flex-direction: column;
@@ -103,53 +121,59 @@
   padding: var(--spacing-3xl) var(--spacing-lg);
   color: var(--color-text-tertiary);
   text-align: center;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-sm);
 }
 
 .emptyIcon {
-  font-size: 64px;
+  font-size: 56px;
   opacity: 0.3;
 }
 
 .emptyText {
-  font-size: var(--font-base);
-  margin-bottom: var(--spacing-md);
+  font-size: var(--font-sm);
+  color: var(--color-text-tertiary);
+  line-height: 1.6;
 }
 
+/* ==================== 底部新建按钮 ==================== */
 .bottomButton {
   position: fixed;
   bottom: calc(var(--nav-height) + var(--safe-bottom) + var(--spacing-lg));
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - var(--spacing-2xl));
-  max-width: calc(430px - var(--spacing-2xl));
-  padding: var(--spacing-lg);
+  width: calc(100% - var(--spacing-3xl));
+  max-width: calc(430px - var(--spacing-3xl));
+  padding: var(--spacing-md);
   font-size: var(--font-base);
   font-weight: var(--weight-semibold);
   color: white;
-  background: var(--color-accent);
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
   border: none;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 4px 16px rgba(52, 199, 89, 0.3);
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: all var(--transition-fast);
   z-index: 50;
+  text-align: center;
 }
 
 .bottomButton:active {
-  opacity: 0.8;
+  transform: translateX(-50%) scale(0.97);
+  opacity: 0.9;
 }
 
+/* ==================== 今日计划卡片 ==================== */
 .todayPlanCard {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
   background: var(--color-surface);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all var(--transition-fast);
 }
 
 .todayPlanCard:active {
@@ -157,7 +181,7 @@
 }
 
 .todayPlanIcon {
-  font-size: 36px;
+  font-size: 32px;
 }
 
 .todayPlanContent {
@@ -165,7 +189,7 @@
 }
 
 .todayPlanTitle {
-  font-size: var(--font-lg);
+  font-size: var(--font-base);
   font-weight: var(--weight-semibold);
   color: var(--color-text-primary);
   margin-bottom: 2px;
@@ -177,6 +201,48 @@
 }
 
 .todayPlanArrow {
-  font-size: var(--font-xl);
+  font-size: var(--font-lg);
   color: var(--color-text-tertiary);
+}
+
+/* ==================== Modal 相关（兼容 PlanEditor） ==================== */
+.input {
+  width: 100%;
+  padding: var(--spacing-md);
+  font-size: var(--font-base);
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.footerButton {
+  flex: 1;
+  padding: var(--spacing-md);
+  font-size: var(--font-base);
+  font-weight: var(--weight-semibold);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.footerButton:active {
+  transform: scale(0.97);
+}
+
+.footerButton.cancel {
+  color: var(--color-text-secondary);
+  background: var(--color-surface-secondary);
+}
+
+.footerButton.confirm {
+  color: white;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
 }
