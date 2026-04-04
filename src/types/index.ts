@@ -1,4 +1,10 @@
 // ==================== 基础类型 ====================
+/** 日期字符串格式：YYYY-MM-DD，例如 '2024-01-15' */
+export type DateString = string;
+
+/** ISO 8601 时间戳，例如 '2024-01-15T08:30:00.000Z' */
+export type ISODateString = string;
+
 export type TrainingDayType = 'training' | 'rest';
 export type ScheduleDayType = 'workday' | 'weekend';
 export type CompletionStatus = 'completed' | 'skipped' | 'pending';
@@ -97,8 +103,8 @@ export interface Plan {
   id: string;
   name: string;
   totalWeeks: number;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: ISODateString;
+  updatedAt: ISODateString;
   targetWeight?: number;
   targetBodyFat?: number;
   trainingDays: Weekday[];
@@ -109,15 +115,16 @@ export interface Plan {
   schedule: SchedulePlan;
 }
 
-// ==================== 计划页执行记录 ====================
-export interface PlanSetRecord {
+// ==================== 通用记录类型 ====================
+export interface SetRecord {
   reps: number;
   weight: number;
 }
 
+// ==================== 计划页执行记录 ====================
 export interface PlanExerciseRecord {
   exerciseId: string;
-  sets: PlanSetRecord[];
+  sets: SetRecord[];
   status: 'completed' | 'skipped' | 'pending';
 }
 
@@ -132,7 +139,8 @@ export interface PlanMealRecord {
 }
 
 export interface DailyPlanRecord {
-  date: string;
+  planId: string;
+  date: DateString;
   training: {
     primary: Record<string, PlanExerciseRecord>;
     secondary: Record<string, PlanExerciseRecord>;
@@ -142,11 +150,6 @@ export interface DailyPlanRecord {
 }
 
 // ==================== 打卡记录 ====================
-export interface SetRecord {
-  reps: number;
-  weight: number;
-}
-
 export interface ExerciseRecord {
   exerciseId: string;
   exerciseName: string;
@@ -162,7 +165,7 @@ export interface CardioRecord {
 }
 
 export interface DailyCheckin {
-  date: string;
+  date: DateString;
   weight?: number;
   bodyFat?: number;
   sleepHours?: number;
@@ -208,7 +211,10 @@ export interface GroceryItem {
 export interface WeeklyGrocery {
   planId: string;
   weekIndex: number;
+  startDate: DateString;
+  endDate: DateString;
   items: GroceryItem[];
+  generatedAt?: ISODateString;
 }
 
 // ==================== 用户设置 ====================
@@ -224,32 +230,47 @@ export interface UserProfile {
 
   baselineWeight?: number;
   baselineBodyFat?: number;
-  baselineUpdatedAt?: string;
+  baselineUpdatedAt?: ISODateString;
 
-  /** 体重/体脂基线是否已锁定（锁定后不可在设置页手动改） */
-  baselineLocked?: boolean;
+  /** 基线是否已手动设置过
+   * - undefined/false: 用户还没有手动设置过，可以在设置页设置
+   * - true: 用户已手动设置过一次，之后只能通过计划切换自动更新
+   */
+  baselineSetManually?: boolean;
 }
 
 export interface BaselineHistory {
-  date: string;
+  date: ISODateString;
   fromPlan: string;
   toPlan: string;
   previousWeight?: number;
   previousBodyFat?: number;
+  isManualUpdate?: boolean;
 }
 
 // ==================== 全局应用状态 ====================
 export interface AppState {
   currentPlanId: string | null;
   pendingPlanId: string | null;
-  pendingPlanDate: string | null;
-  lastPlanSwitchDate: string | null;
+  pendingPlanDate: DateString | null;
+  lastPlanSwitchDate: DateString | null;
   plans: Plan[];
+  
+  /** 打卡记录，key 格式：`${date}`，例如 "2024-01-15" */
   checkins: Record<string, DailyCheckin>;
+  
+  /** 计划执行记录，key 格式：`${planId}_${date}`，例如 "plan-123_2024-01-15" */
   planRecords: Record<string, DailyPlanRecord>;
+  
   customChecklist: CustomChecklistItem[];
   groceries: WeeklyGrocery[];
   profile: UserProfile;
   baselineHistory: BaselineHistory[];
   theme: ThemeMode;
+}
+
+// ==================== 工具函数 ====================
+/** 验证是否为有效的星期几 */
+export function isValidWeekday(day: number): day is Weekday {
+  return Number.isInteger(day) && day >= 0 && day <= 6;
 }
