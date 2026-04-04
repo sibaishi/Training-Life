@@ -61,12 +61,16 @@ function checkAndSwitchPlan(state: AppState): AppState {
 
   // 记录基线历史
   const newHistoryEntry = {
-    date: today,
+    date: new Date().toISOString(),  // ← 改为完整时间戳
     fromPlan: currentPlan?.name || '无',
     toPlan: pendingPlan.name,
     previousWeight: state.profile.baselineWeight,
     previousBodyFat: state.profile.baselineBodyFat,
+    isManualUpdate: false,  // ← 新增：标记为自动更新
   };
+
+  // 清除旧计划的采购清单（关键！）
+  const filteredGroceries = state.groceries.filter(g => g.planId !== state.pendingPlanId);
 
   // 返回更新后的状态
   return {
@@ -81,17 +85,20 @@ function checkAndSwitchPlan(state: AppState): AppState {
     // 记录切换时间
     lastPlanSwitchDate: today,
 
-    // 更新基线数据（并强制锁定 baseline）
+    // 更新基线数据（并标记已手动设置过）
     profile: {
       ...state.profile,
-      baselineLocked: true,
+      baselineSetManually: true,  // ← 修正：改为新字段名
       baselineWeight: latestBody.weight ?? state.profile.baselineWeight,
       baselineBodyFat: latestBody.bodyFat ?? state.profile.baselineBodyFat,
-      baselineUpdatedAt: hasNewBody ? today : state.profile.baselineUpdatedAt,
+      baselineUpdatedAt: hasNewBody ? new Date().toISOString() : state.profile.baselineUpdatedAt,  // ← 完整时间戳
     },
 
     // 添加历史记录
     baselineHistory: [newHistoryEntry, ...state.baselineHistory],
+
+    // 清除旧计划的采购清单（新计划会在采购页重新生成）
+    groceries: filteredGroceries,
   };
 }
 
