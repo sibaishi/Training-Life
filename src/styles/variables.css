@@ -35,8 +35,8 @@
   --color-info-bg: rgba(0, 122, 255, 0.1);
   
   /* 毛玻璃 - iOS 控制中心风格 */
-  --glass-bg: rgba(255, 255, 255, 0.82);
-  --glass-bg-strong: rgba(255, 255, 255, 0.92);
+  --glass-bg: rgba(255, 255, 255, 0.78);
+  --glass-bg-strong: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(255, 255, 255, 0.25);
   --glass-blur: blur(40px);
   
@@ -134,8 +134,8 @@
   --color-info-bg: rgba(10, 132, 255, 0.15);
   
   /* 毛玻璃 - 深色模式 iOS 风格 */
-  --glass-bg: rgba(28, 28, 30, 0.82);
-  --glass-bg-strong: rgba(28, 28, 30, 0.92);
+  --glass-bg: rgba(28, 28, 30, 0.78);
+  --glass-bg-strong: rgba(28, 28, 30, 0.85);
   --glass-border: rgba(255, 255, 255, 0.12);
   
   /* 动态渐变 - 深色模式 */
