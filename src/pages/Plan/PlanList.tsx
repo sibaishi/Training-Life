@@ -21,7 +21,7 @@ type PlanTab = 'training' | 'diet';
 export default function PlanList() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { state, setState } = useAppState();
+  const { state, setState, getPlanForDate } = useAppState();
   
   const [activeTab, setActiveTab] = useState<'today' | 'all'>(() => {
     const tabParam = searchParams.get('tab');
@@ -35,12 +35,15 @@ export default function PlanList() {
   const weekday = getWeekday(selectedDate);
   const isToday = selectedDate === today;
 
+  // ========== 关键修改：根据日期获取对应的计划 ==========
+  const selectedPlan = getPlanForDate(selectedDate);
   const currentPlan = state.plans.find(p => p.id === state.currentPlanId);
   const pendingPlan = state.plans.find(p => p.id === state.pendingPlanId);
   const otherPlans = state.plans.filter(
     p => p.id !== state.currentPlanId && p.id !== state.pendingPlanId
   );
 
+  // ========== 获取当天的记录（key 是日期） ==========
   const getDayRecord = (): DailyPlanRecord => {
     return state.planRecords[selectedDate] || {
       date: selectedDate,
@@ -51,9 +54,20 @@ export default function PlanList() {
 
   const dayRecord = getDayRecord();
 
+  // ========== 更新当天记录 ==========
   const updateDayRecord = (updater: (record: DailyPlanRecord) => DailyPlanRecord) => {
+    // 只允许编辑今天或之前的记录
+    if (selectedDate > today) return;
+
+    // 确保今天有计划映射
+    const newDailyPlanMap = { ...state.dailyPlanMap };
+    if (!newDailyPlanMap[selectedDate] && selectedPlan) {
+      newDailyPlanMap[selectedDate] = selectedPlan.id;
+    }
+
     setState(prev => ({
       ...prev,
+      dailyPlanMap: newDailyPlanMap,
       planRecords: {
         ...prev.planRecords,
         [selectedDate]: updater(getDayRecord()),
@@ -217,6 +231,9 @@ export default function PlanList() {
     setExpandedExercises(new Set());
   };
 
+  // ========== 判断是否可编辑（只有今天和过去可编辑） ==========
+  const isEditable = selectedDate <= today;
+
   const renderStrengthExercise = (
     exercise: StrengthExercise,
     type: 'primary' | 'secondary'
@@ -239,15 +256,21 @@ export default function PlanList() {
             </div>
           </div>
           <div className={todayStyles.exerciseRight}>
-            <span 
-              className={`${todayStyles.statusBadge} ${statusDisplay.className}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleExerciseStatus(type, exercise.id, record.status);
-              }}
-            >
-              {statusDisplay.text}
-            </span>
+            {isEditable ? (
+              <span 
+                className={`${todayStyles.statusBadge} ${statusDisplay.className}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleExerciseStatus(type, exercise.id, record.status);
+                }}
+              >
+                {statusDisplay.text}
+              </span>
+            ) : (
+              <span className={`${todayStyles.statusBadge} ${todayStyles.statusPending}`}>
+                未到
+              </span>
+            )}
             <span className={todayStyles.expandIcon}>{isExpanded ? '▼' : '▶'}</span>
           </div>
         </div>
@@ -269,6 +292,7 @@ export default function PlanList() {
                   value={set.reps || ''}
                   onChange={(e) => updateSet(type, exercise.id, index, 'reps', parseInt(e.target.value) || 0)}
                   placeholder={`${exercise.reps}`}
+                  disabled={!isEditable}
                 />
                 <input
                   type="number"
@@ -276,21 +300,26 @@ export default function PlanList() {
                   value={set.weight || ''}
                   onChange={(e) => updateSet(type, exercise.id, index, 'weight', parseFloat(e.target.value) || 0)}
                   placeholder="0"
+                  step="0.5"
+                  disabled={!isEditable}
                 />
                 <button
                   className={todayStyles.removeSetBtn}
                   onClick={() => removeSet(type, exercise.id, index)}
+                  disabled={!isEditable}
                 >
                   ✕
                 </button>
               </div>
             ))}
-            <button
-              className={todayStyles.addSetBtn}
-              onClick={() => addSet(type, exercise.id, exercise)}
-            >
-              + 添加一组
-            </button>
+            {isEditable && (
+              <button
+                className={todayStyles.addSetBtn}
+                onClick={() => addSet(type, exercise.id, exercise)}
+              >
+                + 添加一组
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -319,14 +348,21 @@ export default function PlanList() {
                 actualDuration: parseInt(e.target.value) || 0 
               })}
               placeholder="实际"
+              disabled={!isEditable}
             />
             <span className={todayStyles.cardioUnit}>分钟</span>
-            <span 
-              className={`${todayStyles.statusBadge} ${statusDisplay.className}`}
-              onClick={() => toggleCardioStatus(exercise.id, record.status)}
-            >
-              {statusDisplay.text}
-            </span>
+            {isEditable ? (
+              <span 
+                className={`${todayStyles.statusBadge} ${statusDisplay.className}`}
+                onClick={() => toggleCardioStatus(exercise.id, record.status)}
+              >
+                {statusDisplay.text}
+              </span>
+            ) : (
+              <span className={`${todayStyles.statusBadge} ${todayStyles.statusPending}`}>
+                未到
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -335,14 +371,15 @@ export default function PlanList() {
 
   // 当天计划标签内容
   if (activeTab === 'today') {
-    const isTrainingDay = currentPlan?.trainingDays.includes(weekday) || false;
-    const isWorkday = currentPlan?.workdays.includes(weekday) || false;
-    const dayTraining = currentPlan?.weeklyTraining[weekday];
-    const dayDiet = currentPlan 
-      ? (isTrainingDay ? currentPlan.trainingDayDiet : currentPlan.restDayDiet)
+    // ========== 关键：使用 selectedPlan（根据日期获取的计划） ==========
+    const isTrainingDay = selectedPlan?.trainingDays.includes(weekday) || false;
+    const isWorkday = selectedPlan?.workdays.includes(weekday) || false;
+    const dayTraining = selectedPlan?.weeklyTraining[weekday];
+    const dayDiet = selectedPlan 
+      ? (isTrainingDay ? selectedPlan.trainingDayDiet : selectedPlan.restDayDiet)
       : null;
-    const daySchedule = currentPlan
-      ? (isWorkday ? currentPlan.schedule.workday : currentPlan.schedule.weekend)
+    const daySchedule = selectedPlan
+      ? (isWorkday ? selectedPlan.schedule.workday : selectedPlan.schedule.weekend)
       : null;
 
     const hasTrainingContent = dayTraining && (
@@ -356,6 +393,10 @@ export default function PlanList() {
     );
 
     const hasScheduleContent = daySchedule && daySchedule.some(item => item.time);
+
+    // 显示计划名称（如果查看的是历史计划，标注出来）
+    const showPlanName = selectedPlan?.name || '未知计划';
+    const isHistoricalPlan = selectedPlan && currentPlan && selectedPlan.id !== currentPlan.id;
 
     return (
       <div className={styles.page}>
@@ -371,17 +412,17 @@ export default function PlanList() {
             当天计划
           </button>
           <button
-            className={`${styles.tab} ${activeTab === 'all' as string ? styles.active : ''}`}
+            className={`${styles.tab} ${(activeTab as string) === 'all' ? styles.active : ''}`}
             onClick={() => setActiveTab('all')}
           >
             完整计划
           </button>
         </div>
 
-        {!currentPlan ? (
+        {!selectedPlan ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyIcon}>📋</div>
-            <div className={styles.emptyText}>还没有启用的计划</div>
+            <div className={styles.emptyText}>这一天没有对应的计划</div>
             <div className={styles.emptyText}>请先创建并启用一个计划</div>
           </div>
         ) : (
@@ -404,6 +445,14 @@ export default function PlanList() {
                 </button>
               </div>
               
+              {/* 显示计划名称 */}
+              <div className={todayStyles.planInfo}>
+                <span className={todayStyles.planName}>{showPlanName}</span>
+                {isHistoricalPlan && (
+                  <span className={todayStyles.historicalBadge}>历史计划</span>
+                )}
+              </div>
+              
               <div className={todayStyles.dayTypes}>
                 <span className={todayStyles.dayTypeBadge}>
                   {isTrainingDay ? '🏋️ 训练日' : '😴 放松日'}
@@ -417,6 +466,13 @@ export default function PlanList() {
                 <button className={todayStyles.backToTodayBtn} onClick={handleBackToToday}>
                   回到今天
                 </button>
+              )}
+
+              {/* 未来日期提示 */}
+              {selectedDate > today && (
+                <div className={todayStyles.futureHint}>
+                  📅 这是未来的日期，仅供预览
+                </div>
               )}
             </div>
 
@@ -489,12 +545,19 @@ export default function PlanList() {
                         <div key={mealType} className={todayStyles.mealCard}>
                           <div 
                             className={todayStyles.mealHeader}
-                            onClick={() => toggleMealStatus(mealType)}
+                            onClick={() => isEditable && toggleMealStatus(mealType)}
+                            style={{ cursor: isEditable ? 'pointer' : 'default' }}
                           >
                             <span className={todayStyles.mealTitle}>{MEAL_LABELS[mealType]}</span>
-                            <span className={`${todayStyles.statusBadge} ${statusDisplay.className}`}>
-                              {statusDisplay.text}
-                            </span>
+                            {isEditable ? (
+                              <span className={`${todayStyles.statusBadge} ${statusDisplay.className}`}>
+                                {statusDisplay.text}
+                              </span>
+                            ) : (
+                              <span className={`${todayStyles.statusBadge} ${todayStyles.statusPending}`}>
+                                未到
+                              </span>
+                            )}
                           </div>
                           <div className={todayStyles.mealBody}>
                             {foods.map(food => (
@@ -552,7 +615,7 @@ export default function PlanList() {
 
       <div className={styles.tabBar}>
         <button
-          className={`${styles.tab} ${(activeTab as string) === 'today' ? styles.active : ''}`}
+          className={`${styles.tab} ${activeTab === 'today' ? styles.active : ''}`}
           onClick={() => setActiveTab('today')}
         >
           当天计划
