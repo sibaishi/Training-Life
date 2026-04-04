@@ -1,4 +1,4 @@
-import { AppState, Plan, Weekday } from '../types';
+import { AppState, Plan, Weekday, WeeklyGrocery } from '../types';
 
 const STORAGE_KEY = 'training-life-app';
 
@@ -14,22 +14,43 @@ export function normalizeState(state: AppState): AppState {
   const genderLocked = profile.genderLocked ?? profile.gender !== undefined;
   const heightLocked = profile.heightLocked ?? profile.height !== undefined;
 
-  const inferredBaselineLocked =
-    profile.baselineLocked === true ||
+  // 推断基线是否已手动设置过
+  const inferredBaselineSetManually =
+    profile.baselineSetManually === true ||
     profile.baselineUpdatedAt !== undefined ||
     profile.baselineWeight !== undefined ||
     profile.baselineBodyFat !== undefined ||
     baselineHistory.length > 0 ||
     state.lastPlanSwitchDate !== null;
 
+  // 迁移采购清单数据（补齐新增字段）
+  const normalizedGroceries: WeeklyGrocery[] = (state.groceries ?? []).map((g) => ({
+    ...g,
+    startDate: g.startDate ?? '',
+    endDate: g.endDate ?? '',
+    generatedAt: g.generatedAt ?? undefined,
+  }));
+
+  // 迁移计划数据（确保日期格式正确）
+  const normalizedPlans: Plan[] = (state.plans ?? []).map((p) => ({
+    ...p,
+    createdAt: p.createdAt?.includes('T') ? p.createdAt : new Date(p.createdAt || Date.now()).toISOString(),
+    updatedAt: p.updatedAt?.includes('T') ? p.updatedAt : new Date(p.updatedAt || Date.now()).toISOString(),
+  }));
+
   return {
     ...state,
+    plans: normalizedPlans,
+    groceries: normalizedGroceries,
     baselineHistory,
+    checkins: state.checkins ?? {},
+    planRecords: state.planRecords ?? {},
+    customChecklist: state.customChecklist ?? [],
     profile: {
       ...profile,
       genderLocked,
       heightLocked,
-      baselineLocked: profile.baselineLocked ?? inferredBaselineLocked,
+      baselineSetManually: profile.baselineSetManually ?? inferredBaselineSetManually,
     },
   };
 }
@@ -40,7 +61,8 @@ export function loadState(): AppState | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw) as AppState;
     return normalizeState(parsed);
-  } catch {
+  } catch (e) {
+    console.error('Failed to load state:', e);
     return null;
   }
 }
@@ -55,12 +77,14 @@ export function saveState(state: AppState): void {
 
 function createDefaultPlan(): Plan {
   const planId = 'default-plan-001';
+  const now = new Date().toISOString();
+  
   return {
     id: planId,
     name: '示例训练计划',
     totalWeeks: 8,
-    createdAt: new Date().toISOString().split('T')[0],
-    updatedAt: new Date().toISOString().split('T')[0],
+    createdAt: now,
+    updatedAt: now,
     targetWeight: 70,
     targetBodyFat: 15,
     trainingDays: [1, 3, 5] as Weekday[],
@@ -195,7 +219,7 @@ export function getDefaultState(): AppState {
     profile: {
       genderLocked: false,
       heightLocked: false,
-      baselineLocked: false,
+      baselineSetManually: false,
     },
     baselineHistory: [],
     theme: 'system',
