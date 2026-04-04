@@ -1,21 +1,105 @@
+/* ==================== 页面容器 ==================== */
+.page {
+  min-height: 100%;
+  background: var(--color-bg);
+}
+
+/* ==================== 顶部导航 ==================== */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg);
+  padding-top: var(--spacing-xl);
+}
+
+.backBtn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.backBtn:active {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+.headerTitle {
+  font-size: var(--font-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.headerPlaceholder {
+  width: 60px;
+}
+
 /* ==================== 内容区 ==================== */
 .content {
-  padding: 0;
+  padding: 0 var(--spacing-lg);
   padding-bottom: var(--spacing-lg);
 }
 
-/* ==================== 日期卡片 ==================== */
+/* ==================== 日期卡片 - 动态渐变 ==================== */
 .dateCard {
-  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
-  border-radius: var(--radius-lg);
+  position: relative;
   padding: var(--spacing-lg);
-  margin: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  
+  /* 动态渐变背景 */
+  background: var(--gradient-accent-animated);
+  background-size: 400% 400%;
+  animation: gradientWave 8s ease-in-out infinite;
+  box-shadow: var(--shadow-accent);
   color: white;
-  box-shadow: 0 4px 16px rgba(52, 199, 89, 0.25);
+}
+
+/* 边缘羽化高光层 */
+.dateCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    rgba(255, 255, 255, 0.18) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 动态光斑层 */
+.dateCard::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 50%
+  );
+  animation: shimmer 6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .dateNav {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -50,6 +134,8 @@
 }
 
 .dateMain {
+  position: relative;
+  z-index: 2;
   font-size: var(--font-xl);
   font-weight: var(--weight-bold);
   margin-bottom: 2px;
@@ -57,6 +143,8 @@
 }
 
 .dateSub {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -80,6 +168,8 @@
 
 /* 计划名称信息 */
 .planInfo {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -101,6 +191,8 @@
 }
 
 .dayTypes {
+  position: relative;
+  z-index: 2;
   display: flex;
   justify-content: center;
   gap: var(--spacing-sm);
@@ -118,6 +210,8 @@
 }
 
 .backToTodayBtn {
+  position: relative;
+  z-index: 2;
   display: block;
   width: 100%;
   margin-top: var(--spacing-md);
@@ -141,6 +235,8 @@
 
 /* 未来日期提示 */
 .futureHint {
+  position: relative;
+  z-index: 2;
   margin-top: var(--spacing-sm);
   padding: var(--spacing-sm) var(--spacing-md);
   background: rgba(255, 255, 255, 0.18);
@@ -151,14 +247,37 @@
   -webkit-backdrop-filter: blur(8px);
 }
 
-/* ==================== 通用卡片 ==================== */
+/* ==================== 通用卡片 - 毛玻璃 ==================== */
 .card {
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
+  position: relative;
   padding: var(--spacing-lg);
-  margin: 0 var(--spacing-lg) var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  overflow: hidden;
+  
+  /* 毛玻璃效果 */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border);
+}
+
+/* 噪点纹理层 */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+.card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .cardHeader {
@@ -215,8 +334,8 @@
 }
 
 .tabActive {
-  color: var(--color-text-primary);
-  background: var(--color-surface);
+  color: white;
+  background: var(--gradient-accent);
   box-shadow: var(--shadow-sm);
   font-weight: var(--weight-semibold);
 }
@@ -315,6 +434,18 @@
   align-items: center;
   gap: var(--spacing-xs);
   flex-wrap: wrap;
+}
+
+.exerciseItem {
+  padding: var(--spacing-md);
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-sm);
+  border: 1px solid var(--color-border);
+}
+
+.exerciseItem:last-child {
+  margin-bottom: 0;
 }
 
 .superSetBadge {
@@ -504,10 +635,19 @@
   background: var(--color-divider);
 }
 
+.mealSection {
+  margin-bottom: var(--spacing-md);
+}
+
+.mealSection:last-child {
+  margin-bottom: 0;
+}
+
 .mealTitle {
-  font-size: var(--font-base);
-  font-weight: var(--weight-medium);
-  color: var(--color-text-primary);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-accent);
+  margin-bottom: var(--spacing-sm);
 }
 
 .mealBody {
@@ -518,12 +658,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-sm) 0;
-  border-bottom: 1px solid var(--color-divider);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-xs);
+  border: 1px solid var(--color-border);
 }
 
 .foodItem:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .foodName {
@@ -591,14 +734,21 @@
 }
 
 .actionButton {
+  margin-top: var(--spacing-md);
   padding: var(--spacing-md) var(--spacing-xl);
   font-size: var(--font-base);
   font-weight: var(--weight-semibold);
   color: white;
-  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
+  
+  /* 动态渐变 */
+  background: var(--gradient-accent-animated);
+  background-size: 400% 400%;
+  animation: gradientWave 8s ease-in-out infinite;
+  box-shadow: var(--shadow-accent);
+  
   transition: all var(--transition-fast);
 }
 
