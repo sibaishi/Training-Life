@@ -158,7 +158,7 @@
 /* ==================== 底部新建按钮 ==================== */
 .bottomButton {
   position: fixed;
-  bottom: calc(var(--nav-height) + var(--safe-bottom) + var(--spacing-lg));
+  bottom: calc(var(--nav-height) + var(--safe-bottom) + var(--spacing-2xl));  /* 🔄 spacing-lg 改成 spacing-2xl */
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - var(--spacing-3xl));
