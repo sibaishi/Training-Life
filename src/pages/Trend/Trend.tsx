@@ -1,440 +1,361 @@
-import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAppState } from '../../contexts/AppContext';
-import { getTodayString, addDays, parseDate } from '../../utils/date';
-import styles from './Trend.module.css';
+.page {
+  min-height: 100%;
+  background: var(--color-bg);
+}
 
-type MetricType = 'weight' | 'bodyFat' | 'sleep';
-type TimeRange = 'week' | 'month' | 'cycle';
+/* ==================== 顶部导航 - 毛玻璃 ==================== */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg);
+  background: var(--glass-bg-strong);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border-bottom: 1px solid var(--glass-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
 
-const METRIC_LABELS: Record<MetricType, string> = {
-  weight: '体重',
-  bodyFat: '体脂率',
-  sleep: '睡眠',
-};
+.backBtn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-base);
+  font-weight: var(--weight-medium);
+  color: var(--color-accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
 
-const METRIC_UNITS: Record<MetricType, string> = {
-  weight: 'kg',
-  bodyFat: '%',
-  sleep: '小时',
-};
+.backBtn:active {
+  opacity: 0.6;
+}
 
-const TIME_LABELS: Record<TimeRange, string> = {
-  week: '本周',
-  month: '本月',
-  cycle: '本周期',
-};
+.headerTitle {
+  font-size: var(--font-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
 
-export default function Trend() {
-  const navigate = useNavigate();
-  const { state } = useAppState();
-  const [metric, setMetric] = useState<MetricType>('weight');
-  const [timeRange, setTimeRange] = useState<TimeRange>('week');
+.headerPlaceholder {
+  width: 60px;
+}
 
-  const today = getTodayString();
-  const currentPlan = state.plans.find(p => p.id === state.currentPlanId);
+/* ==================== 内容区 ==================== */
+.content {
+  padding: var(--spacing-lg);
+  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + var(--spacing-3xl));
+}
 
-  const targetValue = useMemo(() => {
-    if (!currentPlan) return undefined;
+/* ==================== 通用毛玻璃卡片 ==================== */
+.selectorCard,
+.chartCard {
+  position: relative;
+  overflow: hidden;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
 
-    switch (metric) {
-      case 'weight':
-        return currentPlan.targetWeight;
-      case 'bodyFat':
-        return currentPlan.targetBodyFat;
-      case 'sleep':
-        return 7.5;
-      default:
-        return undefined;
-    }
-  }, [currentPlan, metric]);
+.selectorCard::before,
+.chartCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
 
-  const trendData = useMemo(() => {
-    const days: string[] = [];
+.selectorCard > *,
+.chartCard > * {
+  position: relative;
+  z-index: 1;
+}
 
-    switch (timeRange) {
-      case 'week':
-        for (let i = 6; i >= 0; i--) {
-          days.push(addDays(today, -i));
-        }
-        break;
-      case 'month':
-        for (let i = 29; i >= 0; i--) {
-          days.push(addDays(today, -i));
-        }
-        break;
-      case 'cycle':
-        if (currentPlan) {
-          const totalDays = currentPlan.totalWeeks * 7;
-          const limitedDays = Math.min(totalDays, 90);
-          for (let i = limitedDays - 1; i >= 0; i--) {
-            days.push(addDays(today, -i));
-          }
-        } else {
-          for (let i = 6; i >= 0; i--) {
-            days.push(addDays(today, -i));
-          }
-        }
-        break;
-    }
+/* ==================== 选择器卡片 ==================== */
+.selectorCard {
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
 
-    const dataPoints: { date: string; value?: number }[] = days.map(date => {
-      const checkin = state.checkins[date];
-      let value: number | undefined;
+.selectorLabel {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-md);
+}
 
-      switch (metric) {
-        case 'weight':
-          value = checkin?.weight;
-          break;
-        case 'bodyFat':
-          value = checkin?.bodyFat;
-          break;
-        case 'sleep':
-          value = checkin?.sleepHours;
-          break;
-      }
+.selector {
+  display: flex;
+  gap: var(--spacing-sm);
+}
 
-      return { date, value };
-    });
+.selectorBtn {
+  flex: 1;
+  padding: var(--spacing-md);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+  background: var(--color-surface-secondary);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
 
-    const validValues = dataPoints.filter(d => d.value !== undefined).map(d => d.value!);
-    const hasData = validValues.length >= 2;
+.selectorBtn:active {
+  transform: scale(0.95);
+}
 
-    let min = 0, max = 0, avg = 0, change = 0;
-    let trend: 'up' | 'down' | 'stable' | 'none' = 'none';
+.selectorBtnActive {
+  color: white;
+  background: var(--gradient-accent);
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-accent);
+}
 
-    if (validValues.length > 0) {
-      min = Math.min(...validValues);
-      max = Math.max(...validValues);
-      avg = validValues.reduce((a, b) => a + b, 0) / validValues.length;
-    }
+/* ==================== 图表卡片 ==================== */
+.chartCard {
+  padding: var(--spacing-lg);
+}
 
-    if (hasData) {
-      const first = validValues[0];
-      const last = validValues[validValues.length - 1];
-      change = last - first;
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  gap: var(--spacing-sm);
+}
 
-      if (Math.abs(change) < 0.1) {
-        trend = 'stable';
-      } else if (change > 0) {
-        trend = 'up';
-      } else {
-        trend = 'down';
-      }
-    }
+.chartTitle {
+  font-size: var(--font-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
 
-    let distanceToTarget: number | undefined;
-    let targetDirection: 'above' | 'below' | 'reached' | undefined;
+.chartCount {
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+}
 
-    if (targetValue !== undefined && validValues.length > 0) {
-      const latest = validValues[validValues.length - 1];
-      distanceToTarget = latest - targetValue;
+/* ==================== 图表区域 ==================== */
+.chartWrapper {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
 
-      if (Math.abs(distanceToTarget) < 0.1) {
-        targetDirection = 'reached';
-      } else if (distanceToTarget > 0) {
-        targetDirection = 'above';
-      } else {
-        targetDirection = 'below';
-      }
-    }
+.chartYAxis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 45px;
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+  text-align: right;
+  padding-right: var(--spacing-xs);
+  flex-shrink: 0;
+}
 
-    let chartMin = min;
-    let chartMax = max;
+.chartSvgContainer {
+  flex: 1;
+  position: relative;
+}
 
-    if (targetValue !== undefined && validValues.length > 0) {
-      chartMin = Math.min(chartMin, targetValue);
-      chartMax = Math.max(chartMax, targetValue);
-    }
+.chartSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+  aspect-ratio: 2 / 1;
+}
 
-    const chartPadding = (chartMax - chartMin) * 0.15 || 1;
-    chartMin = chartMin - chartPadding;
-    chartMax = chartMax + chartPadding;
-    const chartRange = chartMax - chartMin;
+.gridLine {
+  stroke: var(--color-divider);
+  stroke-width: 0.3;
+  stroke-dasharray: 2, 2;
+}
 
-    return {
-      dataPoints,
-      validCount: validValues.length,
-      totalCount: days.length,
-      hasData,
-      min,
-      max,
-      avg,
-      change,
-      trend,
-      latest: validValues.length > 0 ? validValues[validValues.length - 1] : undefined,
-      distanceToTarget,
-      targetDirection,
-      chartMin,
-      chartMax,
-      chartRange,
-    };
-  }, [state.checkins, metric, timeRange, today, currentPlan, targetValue]);
+.targetLine {
+  stroke: var(--color-accent);
+  stroke-width: 0.5;
+  stroke-dasharray: 3, 2;
+  opacity: 0.85;
+}
 
-  const getChartY = (value: number | undefined): number => {
-    if (value === undefined) return 0;
-    return ((value - trendData.chartMin) / trendData.chartRange) * 100;
-  };
+.dataLine {
+  stroke: var(--color-accent);
+  stroke-width: 0.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
-  const targetLineY = targetValue !== undefined ? getChartY(targetValue) : null;
+.dataPoint {
+  fill: var(--color-accent);
+}
 
-  const getPointX = (index: number): number => {
-    const padding = 5;
-    const width = 100 - padding * 2;
-    return padding + (index / (trendData.dataPoints.length - 1)) * width;
-  };
+.targetLabel {
+  position: absolute;
+  right: 0;
+  transform: translateY(50%);
+  padding: 2px var(--spacing-xs);
+  font-size: 10px;
+  color: var(--color-accent);
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
 
-  const getTrendIcon = () => {
-    switch (trendData.trend) {
-      case 'up': return '📈';
-      case 'down': return '📉';
-      case 'stable': return '➡️';
-      default: return '📊';
-    }
-  };
+/* ==================== X轴标签 ==================== */
+.chartXAxis {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-xs) 45px var(--spacing-xs) 50px;
+}
 
-  const isTrendGood = () => {
-    if (metric === 'sleep') {
-      return trendData.trend === 'up';
-    }
-    return trendData.trend === 'down';
-  };
+.chartXLabel {
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+  text-align: center;
+}
 
-  const isTargetGood = () => {
-    if (trendData.targetDirection === 'reached') return true;
-    if (metric === 'sleep') {
-      return trendData.targetDirection === 'above';
-    }
-    return trendData.targetDirection === 'below';
-  };
+/* ==================== 统计摘要 ==================== */
+.chartSummary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-divider);
+  margin-top: var(--spacing-md);
+}
 
-  const formatValue = (value: number): string => {
-    return value.toFixed(1);
-  };
+.summaryRow {
+  display: flex;
+  gap: var(--spacing-sm);
+}
 
-  return (
-    <div className={styles.page}>
-      <div className={styles.header}>
-        <button className={styles.backBtn} onClick={() => navigate('/')}>
-          ← 返回
-        </button>
-        <div className={styles.headerTitle}>趋势详情</div>
-        <div className={styles.headerPlaceholder}></div>
-      </div>
+.summaryItem {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-md);
+}
 
-      <div className={styles.content}>
-        {/* 指标选择 */}
-        <div className={styles.selectorCard}>
-          <div className={styles.selectorLabel}>选择指标</div>
-          <div className={styles.selector}>
-            {(['weight', 'bodyFat', 'sleep'] as MetricType[]).map(m => (
-              <button
-                key={m}
-                className={`${styles.selectorBtn} ${metric === m ? styles.selectorBtnActive : ''}`}
-                onClick={() => setMetric(m)}
-              >
-                {METRIC_LABELS[m]}
-              </button>
-            ))}
-          </div>
-        </div>
+.summaryIcon {
+  font-size: var(--font-sm);
+  flex-shrink: 0;
+}
 
-        {/* 时间范围选择 */}
-        <div className={styles.selectorCard}>
-          <div className={styles.selectorLabel}>选择时间</div>
-          <div className={styles.selector}>
-            {(['week', 'month', 'cycle'] as TimeRange[]).map(t => (
-              <button
-                key={t}
-                className={`${styles.selectorBtn} ${timeRange === t ? styles.selectorBtnActive : ''}`}
-                onClick={() => setTimeRange(t)}
-              >
-                {TIME_LABELS[t]}
-              </button>
-            ))}
-          </div>
-        </div>
+.summaryLabel {
+  font-size: var(--font-xs);
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
 
-        {/* 图表卡片 */}
-        <div className={styles.chartCard}>
-          <div className={styles.chartHeader}>
-            <span className={styles.chartTitle}>
-              {METRIC_LABELS[metric]}趋势 · {TIME_LABELS[timeRange]}
-            </span>
-            <span className={styles.chartCount}>
-              {trendData.validCount}/{trendData.totalCount} 天有数据
-            </span>
-          </div>
+.summaryValue {
+  margin-left: auto;
+  font-size: var(--font-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
 
-          {trendData.hasData ? (
-            <>
-              <div className={styles.chartWrapper}>
-                <div className={styles.chartYAxis}>
-                  <span>{formatValue(trendData.chartMax)}</span>
-                  <span>{formatValue((trendData.chartMax + trendData.chartMin) / 2)}</span>
-                  <span>{formatValue(trendData.chartMin)}</span>
-                </div>
+.good {
+  color: var(--color-success);
+}
 
-                <div className={styles.chartSvgContainer}>
-                  <svg className={styles.chartSvg} viewBox="0 0 100 50">
-                    <line x1="5" y1="12.5" x2="95" y2="12.5" className={styles.gridLine} />
-                    <line x1="5" y1="25" x2="95" y2="25" className={styles.gridLine} />
-                    <line x1="5" y1="37.5" x2="95" y2="37.5" className={styles.gridLine} />
+.bad {
+  color: var(--color-danger);
+}
 
-                    {targetLineY !== null && (
-                      <line
-                        x1="5"
-                        y1={50 - (targetLineY / 100) * 50}
-                        x2="95"
-                        y2={50 - (targetLineY / 100) * 50}
-                        className={styles.targetLine}
-                      />
-                    )}
+/* ==================== 目标对比行 ==================== */
+.targetRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-accent-soft);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(52, 199, 89, 0.22);
+}
 
-                    <polyline
-                      points={trendData.dataPoints
-                        .map((point, index) => {
-                          if (point.value === undefined) return null;
-                          const x = getPointX(index);
-                          const y = 50 - (getChartY(point.value) / 100) * 50;
-                          return `${x},${y}`;
-                        })
-                        .filter(Boolean)
-                        .join(' ')}
-                      className={styles.dataLine}
-                      fill="none"
-                    />
+.targetInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
 
-                    {trendData.dataPoints.map((point, index) => {
-                      if (point.value === undefined) return null;
-                      const x = getPointX(index);
-                      const y = 50 - (getChartY(point.value) / 100) * 50;
-                      return (
-                        <circle
-                          key={point.date}
-                          cx={x}
-                          cy={y}
-                          r="1"
-                          className={styles.dataPoint}
-                        />
-                      );
-                    })}
-                  </svg>
+.targetIcon {
+  font-size: var(--font-base);
+}
 
-                  {targetLineY !== null && (
-                    <div
-                      className={styles.targetLabel}
-                      style={{ bottom: `${(targetLineY / 100) * 100}%` }}
-                    >
-                      目标 {targetValue}{METRIC_UNITS[metric]}
-                    </div>
-                  )}
-                </div>
-              </div>
+.targetText {
+  font-size: var(--font-sm);
+  color: var(--color-text-primary);
+}
 
-              <div className={styles.chartXAxis}>
-                {timeRange === 'week' ? (
-                  trendData.dataPoints.map(point => (
-                    <span key={point.date} className={styles.chartXLabel}>
-                      {['日', '一', '二', '三', '四', '五', '六'][parseDate(point.date).getDay()]}
-                    </span>
-                  ))
-                ) : (
-                  <>
-                    <span className={styles.chartXLabel}>
-                      {parseDate(trendData.dataPoints[0]?.date || today).getDate()}日
-                    </span>
-                    <span className={styles.chartXLabel}>
-                      {parseDate(trendData.dataPoints[Math.floor(trendData.dataPoints.length / 2)]?.date || today).getDate()}日
-                    </span>
-                    <span className={styles.chartXLabel}>
-                      {parseDate(trendData.dataPoints[trendData.dataPoints.length - 1]?.date || today).getDate()}日
-                    </span>
-                  </>
-                )}
-              </div>
+.targetDistance {
+  font-size: var(--font-sm);
+  font-weight: var(--weight-semibold);
+  text-align: right;
+}
 
-              <div className={styles.chartSummary}>
-                <div className={styles.summaryRow}>
-                  <div className={styles.summaryItem}>
-                    <span className={styles.summaryIcon}>{getTrendIcon()}</span>
-                    <span className={styles.summaryLabel}>变化</span>
-                    <span
-                      className={`${styles.summaryValue} ${
-                        trendData.trend !== 'none' && trendData.trend !== 'stable'
-                          ? (isTrendGood() ? styles.good : styles.bad)
-                          : ''
-                      }`}
-                    >
-                      {trendData.trend === 'up' ? '+' : ''}
-                      {formatValue(trendData.change)} {METRIC_UNITS[metric]}
-                    </span>
-                  </div>
-                  <div className={styles.summaryItem}>
-                    <span className={styles.summaryIcon}>📊</span>
-                    <span className={styles.summaryLabel}>平均</span>
-                    <span className={styles.summaryValue}>
-                      {formatValue(trendData.avg)} {METRIC_UNITS[metric]}
-                    </span>
-                  </div>
-                </div>
+/* ==================== 空状态 ==================== */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-3xl);
+  text-align: center;
+}
 
-                <div className={styles.summaryRow}>
-                  <div className={styles.summaryItem}>
-                    <span className={styles.summaryIcon}>⬆️</span>
-                    <span className={styles.summaryLabel}>最高</span>
-                    <span className={styles.summaryValue}>
-                      {formatValue(trendData.max)} {METRIC_UNITS[metric]}
-                    </span>
-                  </div>
-                  <div className={styles.summaryItem}>
-                    <span className={styles.summaryIcon}>⬇️</span>
-                    <span className={styles.summaryLabel}>最低</span>
-                    <span className={styles.summaryValue}>
-                      {formatValue(trendData.min)} {METRIC_UNITS[metric]}
-                    </span>
-                  </div>
-                </div>
+.emptyIcon {
+  font-size: 48px;
+  opacity: 0.5;
+  margin-bottom: var(--spacing-md);
+}
 
-                {targetValue !== undefined && trendData.latest !== undefined && (
-                  <div className={styles.targetRow}>
-                    <div className={styles.targetInfo}>
-                      <span className={styles.targetIcon}>🎯</span>
-                      <span className={styles.targetText}>
-                        目标 {targetValue} {METRIC_UNITS[metric]}
-                      </span>
-                    </div>
-                    <div className={`${styles.targetDistance} ${isTargetGood() ? styles.good : styles.bad}`}>
-                      {trendData.targetDirection === 'reached' ? (
-                        <span>🎉 已达标</span>
-                      ) : (
-                        <span>
-                          {trendData.targetDirection === 'above' ? '高于目标 ' : '低于目标 '}
-                          {formatValue(Math.abs(trendData.distanceToTarget!))} {METRIC_UNITS[metric]}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </>
-          ) : (
-            <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>📊</div>
-              <div className={styles.emptyText}>暂无足够数据</div>
-              <div className={styles.emptyHint}>
-                需要至少 2 天的{METRIC_LABELS[metric]}数据才能显示趋势
-              </div>
-              <button
-                className={styles.emptyBtn}
-                onClick={() => navigate('/checkin')}
-              >
-                去记录数据
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+.emptyText {
+  font-size: var(--font-base);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.emptyHint {
+  font-size: var(--font-sm);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.emptyBtn {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-base);
+  font-weight: var(--weight-semibold);
+  color: white;
+  background: var(--gradient-accent-animated);
+  background-size: 400% 400%;
+  animation: gradientWave 8s ease-in-out infinite;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  box-shadow: var(--shadow-accent);
+  transition: all var(--transition-fast);
+}
+
+.emptyBtn:active {
+  opacity: 0.85;
+  transform: scale(0.97);
 }
