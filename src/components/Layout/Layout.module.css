@@ -27,10 +27,10 @@
   padding-bottom: var(--safe-bottom);
   z-index: 100;
   
-  /* 毛玻璃效果 */
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
+  /* 毛玻璃效果 - 使用更强的背景 */
+  background: var(--glass-bg-strong);
+  backdrop-filter: var(--glass-blur) saturate(180%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
   border-top: 1px solid var(--glass-border);
 }
 
@@ -89,7 +89,7 @@
 .centerItem.active .navIconWrap {
   background: var(--color-accent);
   color: #ffffff;
-  box-shadow: 0 4px 16px rgba(52, 199, 89, 0.3);
+  box-shadow: var(--shadow-accent);
   transform: scale(1.05);
 }
 
