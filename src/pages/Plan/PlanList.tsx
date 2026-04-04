@@ -599,13 +599,7 @@ export default function PlanList() {
   // 完整计划标签内容
   return (
     <div className={styles.page}>
-      {/* ✨ 移除了标题，只保留新建按钮 */}
-      <div className={styles.header}>
-        <button className={styles.newButton} onClick={handleNewPlan}>
-          + 新建计划
-        </button>
-      </div>
-
+    {/* ✨ 移除了标题和右上角按钮 */}
       <div className={styles.tabBar}>
         <button
           className={`${styles.tab} ${isTodayTab ? styles.active : ''}`}
