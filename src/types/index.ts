@@ -1,5 +1,4 @@
 // ==================== 基础类型 ====================
-
 export type TrainingDayType = 'training' | 'rest';
 export type ScheduleDayType = 'workday' | 'weekend';
 export type CompletionStatus = 'completed' | 'skipped' | 'pending';
@@ -8,7 +7,6 @@ export type ThemeMode = 'light' | 'dark' | 'system';
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 // ==================== 训练计划 ====================
-
 export interface StrengthExercise {
   id: string;
   name: string;
@@ -31,12 +29,9 @@ export interface DayTrainingPlan {
 }
 
 // ==================== 饮食计划 ====================
-
 export type MealType = 'breakfast' | 'postWorkout' | 'lunch' | 'snack' | 'dinner' | 'beforeBed';
 
-export const MEAL_ORDER: MealType[] = [
-  'breakfast', 'postWorkout', 'lunch', 'snack', 'dinner', 'beforeBed'
-];
+export const MEAL_ORDER: MealType[] = ['breakfast', 'postWorkout', 'lunch', 'snack', 'dinner', 'beforeBed'];
 
 export const MEAL_LABELS: Record<MealType, string> = {
   breakfast: '早餐',
@@ -62,7 +57,6 @@ export interface DayDietPlan {
 }
 
 // ==================== 作息计划 ====================
-
 export interface ScheduleItem {
   key: string;
   label: string;
@@ -99,7 +93,6 @@ export interface SchedulePlan {
 }
 
 // ==================== 完整计划 ====================
-
 export interface Plan {
   id: string;
   name: string;
@@ -117,7 +110,6 @@ export interface Plan {
 }
 
 // ==================== 计划页执行记录 ====================
-
 export interface PlanSetRecord {
   reps: number;
   weight: number;
@@ -150,7 +142,6 @@ export interface DailyPlanRecord {
 }
 
 // ==================== 打卡记录 ====================
-
 export interface SetRecord {
   reps: number;
   weight: number;
@@ -196,7 +187,6 @@ export interface ChecklistItemRecord {
 }
 
 // ==================== 自定义打卡项 ====================
-
 export interface CustomChecklistItem {
   id: string;
   name: string;
@@ -205,7 +195,6 @@ export interface CustomChecklistItem {
 }
 
 // ==================== 采购记录 ====================
-
 export interface GroceryItem {
   foodName: string;
   requiredAmount: number;
@@ -223,13 +212,22 @@ export interface WeeklyGrocery {
 }
 
 // ==================== 用户设置 ====================
-
 export interface UserProfile {
   gender?: 'male' | 'female';
   height?: number;
+
+  /** 性别是否已锁定（锁定后除非清除缓存，否则不可修改） */
+  genderLocked?: boolean;
+
+  /** 身高是否已锁定（锁定后除非清除缓存，否则不可修改） */
+  heightLocked?: boolean;
+
   baselineWeight?: number;
   baselineBodyFat?: number;
   baselineUpdatedAt?: string;
+
+  /** 体重/体脂基线是否已锁定（锁定后不可在设置页手动改） */
+  baselineLocked?: boolean;
 }
 
 export interface BaselineHistory {
@@ -241,7 +239,6 @@ export interface BaselineHistory {
 }
 
 // ==================== 全局应用状态 ====================
-
 export interface AppState {
   currentPlanId: string | null;
   pendingPlanId: string | null;
