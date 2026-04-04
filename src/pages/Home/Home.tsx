@@ -33,25 +33,27 @@ const saveDismissedReminder = (id: string) => {
     const today = getTodayString();
     const stored = localStorage.getItem('dismissed-reminders');
     let data = { date: today, ids: [] as string[] };
-    
+
     if (stored) {
       const parsed = JSON.parse(stored);
       if (parsed.date === today) {
         data = parsed;
       }
     }
-    
+
     if (!data.ids.includes(id)) {
       data.ids.push(id);
     }
-    
+
     localStorage.setItem('dismissed-reminders', JSON.stringify(data));
   } catch {}
 };
 
 export default function Home() {
   const navigate = useNavigate();
-  const { state } = useAppState();
+  // ✅ 改动点 1：从 context 中取 getPlanForDate
+  const { state, getPlanForDate } = useAppState();
+
   const [dismissedReminders, setDismissedReminders] = useState<Set<string>>(() => getDismissedReminders());
   const [showBodyDetail, setShowBodyDetail] = useState(false);
 
@@ -63,6 +65,9 @@ export default function Home() {
   const pendingPlan = state.plans.find(p => p.id === state.pendingPlanId);
   const isTrainingDay = currentPlan?.trainingDays.includes(weekday) || false;
   const isWorkday = currentPlan?.workdays.includes(weekday) || false;
+
+  // ✅ 改动点 2：昨天对应的“实际计划”
+  const yesterdayPlan = getPlanForDate(yesterday);
 
   const todayCheckin = state.checkins[today];
   const yesterdayCheckin = state.checkins[yesterday];
@@ -95,7 +100,7 @@ export default function Home() {
     addFoods(currentPlan.restDayDiet, restDaysCount);
 
     const groceryRecord = state.groceries.find(g => g.planId === currentPlan.id);
-    
+
     let completedCount = 0;
     let totalCount = 0;
     let weekCost = 0;
@@ -105,7 +110,7 @@ export default function Home() {
       const requiredAmount = Math.ceil(value.amount * 1.1);
       const existingItem = groceryRecord?.items.find(i => i.foodName === foodName);
       const purchasedAmount = existingItem?.purchasedAmount || 0;
-      
+
       totalCount++;
       if (purchasedAmount >= requiredAmount) {
         completedCount++;
@@ -124,16 +129,16 @@ export default function Home() {
 
   // ============ 趋势数据计算 ============
   const trendData = useMemo(() => {
-    const days: { 
-      date: string; 
+    const days: {
+      date: string;
       dayLabel: string;
-      weight?: number; 
-      bodyFat?: number; 
+      weight?: number;
+      bodyFat?: number;
       sleep?: number;
     }[] = [];
-    
+
     const WEEKDAY_SHORT = ['日', '一', '二', '三', '四', '五', '六'];
-    
+
     // 获取最近7天的数据
     for (let i = 6; i >= 0; i--) {
       const dateStr = addDays(today, -i);
@@ -159,10 +164,10 @@ export default function Home() {
       const min = Math.min(...values);
       const max = Math.max(...values);
       const padding = (max - min) * 0.2 || 1;
-      return { 
-        min: min - padding, 
-        max: max + padding, 
-        range: (max - min + padding * 2) || 1 
+      return {
+        min: min - padding,
+        max: max + padding,
+        range: (max - min + padding * 2) || 1
       };
     };
 
@@ -235,9 +240,9 @@ export default function Home() {
     const points: { x: number; y: number }[] = [];
     const padding = 10; // 左右留白
     const width = 100 - padding * 2;
-    
+
     days.forEach((day, index) => {
-      const value = day[key];
+      const value = (day as any)[key];
       if (value !== null) {
         const x = padding + (index / (days.length - 1)) * width;
         const y = 100 - value;
@@ -246,7 +251,6 @@ export default function Home() {
     });
 
     if (points.length < 2) return '';
-
     return points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
   };
 
@@ -257,12 +261,14 @@ export default function Home() {
     return padding + (index / 6) * width;
   };
 
+  // ✅ 改动点 3：昨日提醒用 yesterdayPlan 判断训练日
   const getYesterdayReminders = () => {
     const reminders: { id: string; text: string }[] = [];
-    
+
+    const yesterdayWeekday = getWeekday(yesterday);
+    const wasTrainingDay = yesterdayPlan?.trainingDays.includes(yesterdayWeekday) || false;
+
     if (!yesterdayCheckin) {
-      const yesterdayWeekday = getWeekday(yesterday);
-      const wasTrainingDay = currentPlan?.trainingDays.includes(yesterdayWeekday);
       if (wasTrainingDay) {
         reminders.push({ id: 'training', text: '昨日训练未完成' });
       }
@@ -270,9 +276,6 @@ export default function Home() {
       reminders.push({ id: 'sleep', text: '昨日睡眠未记录' });
       reminders.push({ id: 'water', text: '昨日饮水未达标' });
     } else {
-      const yesterdayWeekday = getWeekday(yesterday);
-      const wasTrainingDay = currentPlan?.trainingDays.includes(yesterdayWeekday);
-      
       if (wasTrainingDay) {
         const trainingDone = yesterdayCheckin.checklistItems.some(
           item => item.id.startsWith('training-') && item.status === 'completed'
@@ -303,7 +306,7 @@ export default function Home() {
     return reminders.filter(r => !dismissedReminders.has(r.id));
   };
 
-    const getSystemReminders = () => {
+  const getSystemReminders = () => {
     const reminders: { id: string; text: string }[] = [];
 
     // 计划切换成功提醒（切换当天显示）
@@ -379,7 +382,7 @@ export default function Home() {
 
       const dayDiet = isTrainingDay ? currentPlan.trainingDayDiet : currentPlan.restDayDiet;
       MEAL_ORDER.forEach(mealType => {
-        if (dayDiet.meals[mealType]?.length > 0) {
+        if ((dayDiet.meals as any)[mealType]?.length > 0) {
           autoItemsCount++;
           if (todayCheckin.checklistItems.find(i => i.id === `meal-${mealType}`)?.status === 'completed') {
             autoItemsDone++;
@@ -469,7 +472,7 @@ export default function Home() {
         )}
 
         {/* 今日日期信息卡 */}
-        <div 
+        <div
           className={styles.dateCard}
           onClick={() => navigate('/plan?tab=today')}
         >
@@ -483,7 +486,7 @@ export default function Home() {
         </div>
 
         {/* 当前启用计划卡 */}
-        <div 
+        <div
           className={styles.card}
           onClick={() => currentPlan && navigate(`/plan/${currentPlan.id}`)}
         >
@@ -494,7 +497,7 @@ export default function Home() {
             <div className={styles.planInfo}>
               <div className={styles.planName}>{currentPlan.name}</div>
               <div className={styles.planProgressBar}>
-                <div 
+                <div
                   className={styles.planProgressFill}
                   style={{ width: `${getPlanProgress()}%` }}
                 />
@@ -509,7 +512,7 @@ export default function Home() {
         </div>
 
         {/* 当前身体状态摘要卡 */}
-        <div 
+        <div
           className={styles.card}
           onClick={() => setShowBodyDetail(!showBodyDetail)}
         >
@@ -532,7 +535,7 @@ export default function Home() {
               <span className={styles.bodyStatLabel}>体脂率 (%)</span>
             </div>
           </div>
-          
+
           {showBodyDetail && currentPlan && (
             <div className={styles.bodyDetail}>
               <div className={styles.bodyDetailRow}>
@@ -564,7 +567,7 @@ export default function Home() {
         </div>
 
         {/* 今日打卡总进度卡 */}
-        <div 
+        <div
           className={styles.card}
           onClick={() => navigateToCheckin('progress')}
         >
@@ -573,7 +576,7 @@ export default function Home() {
             <span className={styles.progressValue}>{todayProgress}%</span>
           </div>
           <div className={styles.progressBar}>
-            <div 
+            <div
               className={styles.progressFill}
               style={{ width: `${todayProgress}%` }}
             />
@@ -581,7 +584,7 @@ export default function Home() {
         </div>
 
         {/* 今日饮水进度条卡 */}
-        <div 
+        <div
           className={styles.card}
           onClick={() => navigateToCheckin('water')}
         >
@@ -590,21 +593,21 @@ export default function Home() {
             <span className={styles.waterStats}>{waterMl} / {waterTarget} ml</span>
           </div>
           <div className={styles.waterProgressBar}>
-            <div 
+            <div
               className={styles.waterProgressFill}
               style={{ width: `${waterProgress}%` }}
             />
           </div>
           <div className={styles.waterRemaining}>
-            {waterMl >= waterTarget 
-              ? '🎉 已达标！' 
+            {waterMl >= waterTarget
+              ? '🎉 已达标！'
               : `还需 ${waterTarget - waterMl} ml`
             }
           </div>
         </div>
 
         {/* 采购/费用概览卡 */}
-        <div 
+        <div
           className={styles.card}
           onClick={() => navigate('/grocery')}
         >
@@ -637,32 +640,29 @@ export default function Home() {
         </div>
 
         {/* 趋势摘要卡 - 三线折线图 */}
-        <div 
+        <div
           className={styles.card}
           onClick={() => navigate('/trend')}
         >
           <div className={styles.cardHeader}>
             <span className={styles.cardTitle}>📈 本周趋势</span>
           </div>
-          
+
           {trendData.hasAnyData ? (
             <div className={styles.trendContent}>
-              {/* 折线图 */}
               <div className={styles.chartWrapper}>
-                <svg 
+                <svg
                   className={styles.chartSvg}
                   viewBox="0 0 100 50"
                 >
-                  {/* 网格线 */}
                   <line x1="10" y1="12.5" x2="90" y2="12.5" className={styles.gridLine} />
                   <line x1="10" y1="25" x2="90" y2="25" className={styles.gridLine} />
                   <line x1="10" y1="37.5" x2="90" y2="37.5" className={styles.gridLine} />
-                  
-                  {/* 体重折线 - 蓝色 */}
+
                   {trendData.hasWeightData && (
                     <polyline
                       points={trendData.days
-                        .map((day, index) => {
+                        .map((day: any, index) => {
                           if (day.weightNorm === null) return null;
                           const x = getPointX(index);
                           const y = 50 - (day.weightNorm / 100) * 50;
@@ -674,12 +674,11 @@ export default function Home() {
                       fill="none"
                     />
                   )}
-                  
-                  {/* 体脂率折线 - 橙色 */}
+
                   {trendData.hasBodyFatData && (
                     <polyline
                       points={trendData.days
-                        .map((day, index) => {
+                        .map((day: any, index) => {
                           if (day.bodyFatNorm === null) return null;
                           const x = getPointX(index);
                           const y = 50 - (day.bodyFatNorm / 100) * 50;
@@ -691,12 +690,11 @@ export default function Home() {
                       fill="none"
                     />
                   )}
-                  
-                  {/* 睡眠折线 - 紫色 */}
+
                   {trendData.hasSleepData && (
                     <polyline
                       points={trendData.days
-                        .map((day, index) => {
+                        .map((day: any, index) => {
                           if (day.sleepNorm === null) return null;
                           const x = getPointX(index);
                           const y = 50 - (day.sleepNorm / 100) * 50;
@@ -709,41 +707,39 @@ export default function Home() {
                     />
                   )}
 
-                  {/* 数据点 */}
-                  {trendData.days.map((day, index) => {
+                  {trendData.days.map((day: any, index) => {
                     const x = getPointX(index);
                     return (
                       <g key={day.date}>
                         {day.weightNorm !== null && (
-                          <circle 
-                            cx={x} 
-                            cy={50 - (day.weightNorm / 100) * 50} 
-                            r="1.0" 
-                            className={styles.dotWeight} 
+                          <circle
+                            cx={x}
+                            cy={50 - (day.weightNorm / 100) * 50}
+                            r="1.0"
+                            className={styles.dotWeight}
                           />
                         )}
                         {day.bodyFatNorm !== null && (
-                          <circle 
-                            cx={x} 
-                            cy={50 - (day.bodyFatNorm / 100) * 50} 
-                            r="1.0" 
-                            className={styles.dotBodyFat} 
+                          <circle
+                            cx={x}
+                            cy={50 - (day.bodyFatNorm / 100) * 50}
+                            r="1.0"
+                            className={styles.dotBodyFat}
                           />
                         )}
                         {day.sleepNorm !== null && (
-                          <circle 
-                            cx={x} 
-                            cy={50 - (day.sleepNorm / 100) * 50} 
-                            r="1.0" 
-                            className={styles.dotSleep} 
+                          <circle
+                            cx={x}
+                            cy={50 - (day.sleepNorm / 100) * 50}
+                            r="1.0"
+                            className={styles.dotSleep}
                           />
                         )}
                       </g>
                     );
                   })}
                 </svg>
-                
-                {/* X轴标签 */}
+
                 <div className={styles.chartXAxis}>
                   {trendData.days.map(day => (
                     <span key={day.date} className={styles.chartXLabel}>{day.dayLabel}</span>
@@ -751,7 +747,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* 图例 */}
               <div className={styles.chartLegend}>
                 <div className={styles.legendItem}>
                   <span className={`${styles.legendDot} ${styles.legendWeight}`}></span>
@@ -805,8 +800,8 @@ export default function Home() {
               <span className={styles.trendEmptyIcon}>📊</span>
               <span className={styles.trendEmptyText}>记录更多数据以查看趋势</span>
               <span className={styles.trendEmptyHint}>
-                体重 {trendData.weightStats.count}/2 · 
-                体脂 {trendData.bodyFatStats.count}/2 · 
+                体重 {trendData.weightStats.count}/2 ·
+                体脂 {trendData.bodyFatStats.count}/2 ·
                 睡眠 {trendData.sleepStats.count}/2
               </span>
             </div>
