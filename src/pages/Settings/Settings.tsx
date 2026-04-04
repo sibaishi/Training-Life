@@ -7,29 +7,22 @@ import styles from './Settings.module.css';
 function MaleAvatar() {
   return (
     <svg viewBox="0 0 120 120" className={styles.avatarSvg} aria-hidden="true">
-      <defs>
-        <linearGradient id="maleGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="currentColor" stopOpacity="0.95" />
-          <stop offset="100%" stopColor="currentColor" stopOpacity="0.65" />
-        </linearGradient>
-      </defs>
-      <circle cx="60" cy="42" r="18" fill="url(#maleGrad)" />
-      <path
-        d="M29 100c2-18 14-31 31-31s29 13 31 31"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="12"
-        strokeLinecap="round"
-        strokeOpacity="0.7"
-      />
-      <path
-        d="M39 31c4-12 16-19 30-19 10 0 20 4 27 12"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="10"
-        strokeLinecap="round"
-        strokeOpacity="0.35"
-      />
+      <g fill="none">
+        {/* 头发/上轮廓 */}
+        <path
+          d="M34 43c0-15 12-27 26-27 13 0 25 10 27 24-6-5-13-7-21-7-9 0-18 3-26 10z"
+          fill="currentColor"
+          fillOpacity="0.26"
+        />
+        {/* 脸 */}
+        <circle cx="60" cy="46" r="18" fill="currentColor" fillOpacity="0.9" />
+        {/* 身体 */}
+        <path
+          d="M28 97c3-15 16-26 32-26s29 11 32 26"
+          fill="currentColor"
+          fillOpacity="0.7"
+        />
+      </g>
     </svg>
   );
 }
@@ -37,26 +30,22 @@ function MaleAvatar() {
 function FemaleAvatar() {
   return (
     <svg viewBox="0 0 120 120" className={styles.avatarSvg} aria-hidden="true">
-      <defs>
-        <linearGradient id="femaleGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="currentColor" stopOpacity="0.95" />
-          <stop offset="100%" stopColor="currentColor" stopOpacity="0.62" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M28 44c0-20 14-32 32-32s32 12 32 32c0 18-8 28-10 39H38c-2-11-10-21-10-39z"
-        fill="currentColor"
-        fillOpacity="0.22"
-      />
-      <circle cx="60" cy="42" r="17" fill="url(#femaleGrad)" />
-      <path
-        d="M33 100c4-16 14-28 27-28s23 12 27 28"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="12"
-        strokeLinecap="round"
-        strokeOpacity="0.68"
-      />
+      <g fill="none">
+        {/* 长发外轮廓 */}
+        <path
+          d="M27 48c0-21 15-34 33-34s33 13 33 34c0 10-3 19-7 28H34c-4-9-7-18-7-28z"
+          fill="currentColor"
+          fillOpacity="0.22"
+        />
+        {/* 脸 */}
+        <circle cx="60" cy="44" r="16.5" fill="currentColor" fillOpacity="0.92" />
+        {/* 身体 */}
+        <path
+          d="M30 98c4-14 15-24 30-24s26 10 30 24"
+          fill="currentColor"
+          fillOpacity="0.68"
+        />
+      </g>
     </svg>
   );
 }
@@ -64,15 +53,14 @@ function FemaleAvatar() {
 function EmptyAvatar() {
   return (
     <svg viewBox="0 0 120 120" className={styles.avatarSvg} aria-hidden="true">
-      <circle cx="60" cy="42" r="18" fill="currentColor" fillOpacity="0.2" />
-      <path
-        d="M32 98c4-16 15-28 28-28s24 12 28 28"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="12"
-        strokeLinecap="round"
-        strokeOpacity="0.18"
-      />
+      <g fill="none">
+        <circle cx="60" cy="44" r="17" fill="currentColor" fillOpacity="0.18" />
+        <path
+          d="M31 97c4-14 15-24 29-24s25 10 29 24"
+          fill="currentColor"
+          fillOpacity="0.12"
+        />
+      </g>
     </svg>
   );
 }
