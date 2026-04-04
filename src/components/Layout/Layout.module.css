@@ -12,10 +12,11 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 8px);
+  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 12px);
   -webkit-overflow-scrolling: touch;
 }
 
+/* ==================== 毛玻璃底部导航栏 ==================== */
 .bottomNav {
   position: fixed;
   bottom: 0;
@@ -23,40 +24,120 @@
   transform: translateX(-50%);
   width: 100%;
   max-width: 430px;
-  height: calc(var(--nav-height) + var(--safe-bottom));
   padding-bottom: var(--safe-bottom);
-  background-color: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
   z-index: 100;
+  
+  /* 毛玻璃效果 */
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-top: 1px solid var(--glass-border);
 }
 
+.navInner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: var(--nav-height);
+  padding: 0 var(--spacing-sm);
+}
+
+/* ==================== 导航项 ==================== */
 .navItem {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  padding: var(--spacing-xs) var(--spacing-md);
+  padding: var(--spacing-xs) var(--spacing-sm);
   color: var(--color-text-tertiary);
-  transition: color 0.2s;
+  transition: color var(--transition-normal), transform var(--transition-normal);
   background: none;
   border: none;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  position: relative;
+  min-width: 52px;
 }
 
+.navItem:active {
+  transform: scale(0.92) !important;
+  opacity: 1 !important;
+}
+
+/* 选中状态 */
 .navItem.active {
   color: var(--color-accent);
 }
 
-.navIcon {
-  font-size: 22px;
-  line-height: 1;
+/* ==================== 中间突出按钮（总览） ==================== */
+.centerItem {
+  transform: translateY(-6px);
 }
 
+.centerItem .navIconWrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--spring), box-shadow var(--transition-normal), background var(--transition-normal);
+}
+
+.centerItem.active .navIconWrap {
+  background: var(--color-accent);
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(52, 199, 89, 0.3);
+  transform: scale(1.05);
+}
+
+/* 普通导航项选中时图标上移 */
+.navItem.active:not(.centerItem) {
+  transform: translateY(-2px);
+}
+
+.navItem.active:not(.centerItem) .navIconWrap {
+  transform: scale(1.1);
+}
+
+/* ==================== 图标容器 ==================== */
+.navIconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  transition: transform var(--spring);
+}
+
+/* ==================== 标签文字 ==================== */
 .navLabel {
-  font-size: var(--font-xs);
+  font-size: 10px;
   font-weight: var(--weight-medium);
+  letter-spacing: 0.02em;
+  transition: color var(--transition-normal);
+}
+
+.centerItem .navLabel {
+  margin-top: 2px;
+}
+
+/* 选中指示点 */
+.navItem.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  opacity: 0;
+}
+
+.navItem.active:not(.centerItem)::after {
+  opacity: 1;
 }
