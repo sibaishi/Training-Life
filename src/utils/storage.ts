@@ -1,4 +1,5 @@
 import { AppState, Plan, Weekday, WeeklyGrocery } from '../types';
+import { getTodayString } from './date';
 
 const STORAGE_KEY = 'training-life-app';
 
@@ -38,10 +39,20 @@ export function normalizeState(state: AppState): AppState {
     updatedAt: p.updatedAt?.includes('T') ? p.updatedAt : new Date(p.updatedAt || Date.now()).toISOString(),
   }));
 
+  // 初始化 dailyPlanMap（如果不存在）
+  const dailyPlanMap = state.dailyPlanMap ?? {};
+
+  // 如果 dailyPlanMap 为空且有当前计划，初始化今天的映射
+  if (Object.keys(dailyPlanMap).length === 0 && state.currentPlanId) {
+    const today = getTodayString();
+    dailyPlanMap[today] = state.currentPlanId;
+  }
+
   return {
     ...state,
     plans: normalizedPlans,
     groceries: normalizedGroceries,
+    dailyPlanMap,
     baselineHistory,
     checkins: state.checkins ?? {},
     planRecords: state.planRecords ?? {},
@@ -206,12 +217,17 @@ function createDefaultPlan(): Plan {
 
 export function getDefaultState(): AppState {
   const defaultPlan = createDefaultPlan();
+  const today = getTodayString();
+  
   return {
     currentPlanId: defaultPlan.id,
     pendingPlanId: null,
     pendingPlanDate: null,
     lastPlanSwitchDate: null,
     plans: [defaultPlan],
+    dailyPlanMap: {
+      [today]: defaultPlan.id,  // 初始化今天的计划映射
+    },
     checkins: {},
     planRecords: {},
     customChecklist: [],
