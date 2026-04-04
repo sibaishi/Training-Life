@@ -1,51 +1,18 @@
-.page {
-  min-height: 100%;
-  background: var(--color-bg);
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--spacing-lg);
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.backBtn {
-  padding: var(--spacing-sm);
-  font-size: var(--font-base);
-  font-weight: var(--weight-medium);
-  color: var(--color-text-primary);
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.headerTitle {
-  font-size: var(--font-lg);
-  font-weight: var(--weight-semibold);
-}
-
-.headerPlaceholder {
-  width: 60px;
-}
-
+/* ==================== 内容区 ==================== */
 .content {
   padding: 0;
-  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + var(--spacing-3xl));
+  padding-bottom: var(--spacing-lg);
 }
 
+/* ==================== 日期卡片 ==================== */
 .dateCard {
-  background: var(--color-accent);
-  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+  border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
   margin: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
   color: white;
+  box-shadow: 0 4px 16px rgba(52, 199, 89, 0.25);
 }
 
 .dateNav {
@@ -56,23 +23,26 @@
 }
 
 .dateNavBtn {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: var(--weight-bold);
   color: white;
   background: rgba(255, 255, 255, 0.2);
   border: none;
   border-radius: var(--radius-full);
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .dateNavBtn:active {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(0.9);
 }
 
 .dateCenter {
@@ -83,6 +53,7 @@
   font-size: var(--font-xl);
   font-weight: var(--weight-bold);
   margin-bottom: 2px;
+  letter-spacing: -0.01em;
 }
 
 .dateSub {
@@ -93,16 +64,40 @@
 }
 
 .weekday {
-  font-size: var(--font-base);
-  opacity: 0.9;
+  font-size: var(--font-sm);
+  opacity: 0.85;
 }
 
 .todayBadge {
   padding: 2px var(--spacing-sm);
   font-size: var(--font-xs);
-  font-weight: var(--weight-medium);
-  background: rgba(255, 255, 255, 0.3);
+  font-weight: var(--weight-semibold);
+  background: rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-full);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* 计划名称信息 */
+.planInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin: var(--spacing-sm) 0;
+}
+
+.planName {
+  font-size: var(--font-sm);
+  opacity: 0.85;
+}
+
+.historicalBadge {
+  font-size: var(--font-xs);
+  padding: 2px var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-full);
+  font-weight: var(--weight-medium);
 }
 
 .dayTypes {
@@ -115,8 +110,11 @@
 .dayTypeBadge {
   padding: var(--spacing-xs) var(--spacing-sm);
   font-size: var(--font-xs);
-  background: rgba(255, 255, 255, 0.2);
+  font-weight: var(--weight-medium);
+  background: rgba(255, 255, 255, 0.18);
   border-radius: var(--radius-full);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .backToTodayBtn {
@@ -127,23 +125,40 @@
   font-size: var(--font-sm);
   font-weight: var(--weight-medium);
   color: white;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .backToTodayBtn:active {
   background: rgba(255, 255, 255, 0.3);
+  transform: scale(0.98);
 }
 
+/* 未来日期提示 */
+.futureHint {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-sm);
+  text-align: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ==================== 通用卡片 ==================== */
 .card {
   background: var(--color-surface);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
   margin: 0 var(--spacing-lg) var(--spacing-md);
   box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
 }
 
 .cardHeader {
@@ -152,13 +167,14 @@
   justify-content: space-between;
   margin-bottom: var(--spacing-md);
   padding-bottom: var(--spacing-sm);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-divider);
 }
 
 .cardTitle {
   font-size: var(--font-base);
   font-weight: var(--weight-semibold);
   color: var(--color-text-primary);
+  letter-spacing: -0.01em;
 }
 
 .cardBadge {
@@ -166,44 +182,50 @@
   font-size: var(--font-xs);
   font-weight: var(--weight-medium);
   color: var(--color-accent);
-  background: var(--color-accent-light);
+  background: var(--color-accent-soft);
   border-radius: var(--radius-full);
 }
 
+/* ==================== 训练/饮食切换 ==================== */
 .tabBar {
   display: flex;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs);
   margin-bottom: var(--spacing-lg);
-  padding-bottom: var(--spacing-md);
-  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-xs);
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-sm);
 }
 
 .tab {
   flex: 1;
   padding: var(--spacing-sm);
-  font-size: var(--font-base);
+  font-size: var(--font-sm);
   font-weight: var(--weight-medium);
   color: var(--color-text-secondary);
   background: none;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-normal);
+  text-align: center;
 }
 
 .tab:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 .tabActive {
-  color: var(--color-accent);
-  background: var(--color-accent-light);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  font-weight: var(--weight-semibold);
 }
 
 .tabContent {
-  min-height: 100px;
+  min-height: 80px;
 }
 
+/* ==================== 休息日提示 ==================== */
 .restDayHint {
   display: flex;
   flex-direction: column;
@@ -213,12 +235,13 @@
 }
 
 .restDayIcon {
-  font-size: 48px;
+  font-size: 40px;
   margin-bottom: var(--spacing-md);
+  opacity: 0.6;
 }
 
 .restDayText {
-  font-size: var(--font-base);
+  font-size: var(--font-sm);
   color: var(--color-text-secondary);
 }
 
@@ -229,6 +252,7 @@
   font-size: var(--font-sm);
 }
 
+/* ==================== 训练分区 ==================== */
 .trainingSection {
   margin-bottom: var(--spacing-lg);
 }
@@ -238,155 +262,21 @@
 }
 
 .sectionTitle {
-  font-size: var(--font-sm);
-  font-weight: var(--weight-semibold);
-  color: var(--color-accent);
-  margin-bottom: var(--spacing-sm);
-}
-
-.exerciseItem {
-  padding: var(--spacing-md);
-  background: var(--color-bg);
-  border-radius: var(--radius-sm);
-  margin-bottom: var(--spacing-sm);
-}
-
-.exerciseItem:last-child {
-  margin-bottom: 0;
-}
-
-.exerciseName {
-  font-size: var(--font-base);
-  font-weight: var(--weight-medium);
-  color: var(--color-text-primary);
-  margin-bottom: 2px;
-}
-
-.exerciseDetail {
-  font-size: var(--font-sm);
-  color: var(--color-text-secondary);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
-
-.superSetBadge {
-  padding: 2px var(--spacing-xs);
   font-size: var(--font-xs);
-  color: var(--color-warning);
-  background: rgba(245, 158, 11, 0.1);
-  border-radius: var(--radius-sm);
-}
-
-.mealSection {
-  margin-bottom: var(--spacing-lg);
-}
-
-.mealSection:last-child {
-  margin-bottom: 0;
-}
-
-.mealTitle {
-  font-size: var(--font-sm);
   font-weight: var(--weight-semibold);
   color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   margin-bottom: var(--spacing-sm);
 }
 
-.foodItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--color-bg);
-  border-radius: var(--radius-sm);
-  margin-bottom: var(--spacing-xs);
-}
-
-.foodItem:last-child {
-  margin-bottom: 0;
-}
-
-.foodName {
-  font-size: var(--font-sm);
-  color: var(--color-text-primary);
-}
-
-.foodQuantity {
-  font-size: var(--font-sm);
-  font-weight: var(--weight-medium);
-  color: var(--color-text-secondary);
-}
-
-.scheduleList {
-  display: flex;
-  flex-direction: column;
-}
-
-.scheduleItem {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-lg);
-  padding: var(--spacing-md) 0;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.scheduleItem:last-child {
-  border-bottom: none;
-}
-
-.scheduleTime {
-  font-size: var(--font-base);
-  font-weight: var(--weight-semibold);
-  color: var(--color-accent);
-  min-width: 60px;
-}
-
-.scheduleLabel {
-  font-size: var(--font-base);
-  color: var(--color-text-primary);
-}
-
-.emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-3xl);
-  gap: var(--spacing-lg);
-}
-
-.emptyIcon {
-  font-size: 64px;
-  opacity: 0.5;
-}
-
-.emptyText {
-  font-size: var(--font-base);
-  color: var(--color-text-tertiary);
-}
-
-.actionButton {
-  padding: var(--spacing-md) var(--spacing-xl);
-  font-size: var(--font-base);
-  font-weight: var(--weight-medium);
-  color: white;
-  background: var(--color-accent);
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-}
-
-.actionButton:active {
-  opacity: 0.8;
-}
-
-/* 动作卡片 */
+/* ==================== 训练动作卡片 ==================== */
 .exerciseCard {
-  background: var(--color-bg);
-  border-radius: var(--radius-sm);
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-md);
   margin-bottom: var(--spacing-sm);
   overflow: hidden;
+  border: 1px solid var(--color-border);
 }
 
 .exerciseCard:last-child {
@@ -399,6 +289,11 @@
   justify-content: space-between;
   padding: var(--spacing-md);
   cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.exerciseHeader:active {
+  background: var(--color-divider);
 }
 
 .exerciseInfo {
@@ -406,25 +301,53 @@
   min-width: 0;
 }
 
+.exerciseName {
+  font-size: var(--font-base);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
+  margin-bottom: 2px;
+}
+
+.exerciseDetail {
+  font-size: var(--font-xs);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.superSetBadge {
+  padding: 1px var(--spacing-xs);
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+  color: var(--color-warning);
+  background: var(--color-warning-bg);
+  border-radius: var(--radius-xs);
+}
+
 .exerciseRight {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
+  flex-shrink: 0;
 }
 
 .expandIcon {
-  font-size: var(--font-xs);
+  font-size: 10px;
   color: var(--color-text-tertiary);
+  transition: transform var(--transition-normal);
 }
 
+/* ==================== 组数记录 ==================== */
 .exerciseBody {
-  padding: 0 var(--spacing-md) var(--spacing-md);
-  border-top: 1px solid var(--color-border);
+  padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md);
+  border-top: 1px solid var(--color-divider);
 }
 
 .setsHeader {
   display: grid;
-  grid-template-columns: 60px 1fr 1fr 32px;
+  grid-template-columns: 52px 1fr 1fr 28px;
   gap: var(--spacing-sm);
   padding: var(--spacing-sm) 0;
   font-size: var(--font-xs);
@@ -434,16 +357,17 @@
 
 .setRow {
   display: grid;
-  grid-template-columns: 60px 1fr 1fr 32px;
+  grid-template-columns: 52px 1fr 1fr 28px;
   gap: var(--spacing-sm);
   align-items: center;
   padding: var(--spacing-xs) 0;
 }
 
 .setNumber {
-  font-size: var(--font-sm);
+  font-size: var(--font-xs);
   color: var(--color-text-secondary);
   text-align: center;
+  font-weight: var(--weight-medium);
 }
 
 .setInput {
@@ -454,10 +378,13 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  font-variant-numeric: tabular-nums;
 }
 
 .setInput:focus {
   border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
 }
 
 .removeSetBtn {
@@ -466,16 +393,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-sm);
+  font-size: var(--font-xs);
   color: var(--color-danger);
   background: none;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
   cursor: pointer;
+  transition: background var(--transition-fast);
 }
 
 .removeSetBtn:active {
-  background: var(--color-border);
+  background: var(--color-danger-bg);
 }
 
 .addSetBtn {
@@ -485,29 +413,34 @@
   font-size: var(--font-sm);
   font-weight: var(--weight-medium);
   color: var(--color-accent);
-  background: var(--color-accent-light);
+  background: var(--color-accent-soft);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: all var(--transition-fast);
 }
 
 .addSetBtn:active {
   opacity: 0.7;
+  transform: scale(0.98);
 }
 
-/* 有氧输入 */
+/* ==================== 有氧输入 ==================== */
 .cardioInput {
-  width: 50px;
+  width: 48px;
   padding: var(--spacing-xs) var(--spacing-sm);
   font-size: var(--font-sm);
   text-align: center;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
+  font-variant-numeric: tabular-nums;
+  transition: border-color var(--transition-fast);
 }
 
 .cardioInput:focus {
   border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
 }
 
 .cardioUnit {
@@ -515,37 +448,43 @@
   color: var(--color-text-tertiary);
 }
 
-/* 状态徽章 */
+/* ==================== 状态徽章 ==================== */
 .statusBadge {
   padding: var(--spacing-xs) var(--spacing-sm);
   font-size: var(--font-xs);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-semibold);
   border-radius: var(--radius-full);
   cursor: pointer;
   user-select: none;
+  transition: all var(--transition-fast);
+}
+
+.statusBadge:active {
+  transform: scale(0.92);
 }
 
 .statusCompleted {
   color: var(--color-success);
-  background: rgba(16, 185, 129, 0.1);
+  background: var(--color-success-bg);
 }
 
 .statusSkipped {
   color: var(--color-warning);
-  background: rgba(245, 158, 11, 0.1);
+  background: var(--color-warning-bg);
 }
 
 .statusPending {
   color: var(--color-text-tertiary);
-  background: var(--color-border);
+  background: var(--color-surface-secondary);
 }
 
-/* 餐次卡片 */
+/* ==================== 餐次卡片 ==================== */
 .mealCard {
-  background: var(--color-bg);
-  border-radius: var(--radius-sm);
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-md);
   margin-bottom: var(--spacing-sm);
   overflow: hidden;
+  border: 1px solid var(--color-border);
 }
 
 .mealCard:last-child {
@@ -558,41 +497,112 @@
   justify-content: space-between;
   padding: var(--spacing-md);
   cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.mealHeader:active {
+  background: var(--color-divider);
+}
+
+.mealTitle {
+  font-size: var(--font-base);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
 }
 
 .mealBody {
   padding: 0 var(--spacing-md) var(--spacing-md);
 }
 
-/* 计划信息 */
-.planInfo {
+.foodItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.foodItem:last-child {
+  border-bottom: none;
+}
+
+.foodName {
+  font-size: var(--font-sm);
+  color: var(--color-text-primary);
+}
+
+.foodQuantity {
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==================== 作息计划 ==================== */
+.scheduleList {
+  display: flex;
+  flex-direction: column;
+}
+
+.scheduleItem {
   display: flex;
   align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.scheduleItem:last-child {
+  border-bottom: none;
+}
+
+.scheduleTime {
+  font-size: var(--font-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-accent);
+  min-width: 56px;
+  font-variant-numeric: tabular-nums;
+}
+
+.scheduleLabel {
+  font-size: var(--font-base);
+  color: var(--color-text-primary);
+}
+
+/* ==================== 空状态 ==================== */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin: 8px 0;
+  padding: var(--spacing-3xl);
+  gap: var(--spacing-sm);
 }
 
-.planName {
-  font-size: 14px;
-  color: var(--text-secondary);
+.emptyIcon {
+  font-size: 56px;
+  opacity: 0.3;
 }
 
-.historicalBadge {
-  font-size: 12px;
-  padding: 2px 8px;
-  background: var(--warning-bg, #fef3c7);
-  color: var(--warning-text, #92400e);
-  border-radius: 4px;
-}
-
-/* 未来日期提示 */
-.futureHint {
-  margin-top: 8px;
-  padding: 8px 12px;
-  background: var(--info-bg, #dbeafe);
-  color: var(--info-text, #1e40af);
-  border-radius: 8px;
-  font-size: 13px;
+.emptyText {
+  font-size: var(--font-sm);
+  color: var(--color-text-tertiary);
   text-align: center;
+}
+
+.actionButton {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-base);
+  font-weight: var(--weight-semibold);
+  color: white;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.actionButton:active {
+  transform: scale(0.97);
+  opacity: 0.9;
 }
