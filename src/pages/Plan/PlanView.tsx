@@ -88,14 +88,15 @@ export default function PlanView() {
     alert(`计划「${plan.name}」将于明天（${tomorrow}）生效`);
   };
 
-  const handleCopyPlan = () => {
-    const newPlan: Plan = {
-      ...JSON.parse(JSON.stringify(plan)),
-      id: generateId(),
-      name: `${plan.name} - 副本`,
-      createdAt: getTodayString(),
-      updatedAt: getTodayString(),
-    };
+const handleCopyPlan = () => {
+  const now = new Date().toISOString();
+  const newPlan: Plan = {
+    ...JSON.parse(JSON.stringify(plan)),
+    id: generateId(),
+    name: `${plan.name} - 副本`,
+    createdAt: now,
+    updatedAt: now,
+  };
 
     setState(prev => ({
       ...prev,
@@ -124,12 +125,13 @@ export default function PlanView() {
       }
 
       if (newPlans.length === 0) {
+        const now = new Date().toISOString();
         const emptyPlan: Plan = {
           id: generateId(),
           name: '新建计划',
           totalWeeks: 8,
-          createdAt: getTodayString(),
-          updatedAt: getTodayString(),
+          createdAt: now,
+          updatedAt: now,
           trainingDays: [],
           workdays: [1, 2, 3, 4, 5],
           weeklyTraining: {},
