@@ -17,13 +17,14 @@ import styles from './Plan.module.css';
 import todayStyles from './TodayPlan.module.css';
 
 type PlanTab = 'training' | 'diet';
+type ActiveTab = 'today' | 'all';
 
 export default function PlanList() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { state, setState, getPlanForDate } = useAppState();
   
-  const [activeTab, setActiveTab] = useState<'today' | 'all'>(() => {
+  const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
     const tabParam = searchParams.get('tab');
     return tabParam === 'all' ? 'all' : 'today';
   });
@@ -34,6 +35,10 @@ export default function PlanList() {
   const today = getTodayString();
   const weekday = getWeekday(selectedDate);
   const isToday = selectedDate === today;
+
+  // 用于避免 TypeScript 类型收窄问题
+  const isTodayTab = activeTab === 'today';
+  const isAllTab = activeTab === 'all';
 
   // ========== 关键修改：根据日期获取对应的计划 ==========
   const selectedPlan = getPlanForDate(selectedDate);
@@ -370,7 +375,7 @@ export default function PlanList() {
   };
 
   // 当天计划标签内容
-  if (activeTab === 'today') {
+  if (isTodayTab) {
     // ========== 关键：使用 selectedPlan（根据日期获取的计划） ==========
     const isTrainingDay = selectedPlan?.trainingDays.includes(weekday) || false;
     const isWorkday = selectedPlan?.workdays.includes(weekday) || false;
@@ -406,13 +411,13 @@ export default function PlanList() {
 
         <div className={styles.tabBar}>
           <button
-            className={`${styles.tab} ${activeTab === 'today' ? styles.active : ''}`}
+            className={`${styles.tab} ${isTodayTab ? styles.active : ''}`}
             onClick={() => setActiveTab('today')}
           >
             当天计划
           </button>
           <button
-            className={`${styles.tab} ${(activeTab as string) === 'all' ? styles.active : ''}`}
+            className={`${styles.tab} ${isAllTab ? styles.active : ''}`}
             onClick={() => setActiveTab('all')}
           >
             完整计划
@@ -615,13 +620,13 @@ export default function PlanList() {
 
       <div className={styles.tabBar}>
         <button
-          className={`${styles.tab} ${activeTab === 'today' ? styles.active : ''}`}
+          className={`${styles.tab} ${isTodayTab ? styles.active : ''}`}
           onClick={() => setActiveTab('today')}
         >
           当天计划
         </button>
         <button
-          className={`${styles.tab} ${activeTab === 'all' ? styles.active : ''}`}
+          className={`${styles.tab} ${isAllTab ? styles.active : ''}`}
           onClick={() => setActiveTab('all')}
         >
           完整计划
