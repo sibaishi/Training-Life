@@ -36,11 +36,9 @@ export default function PlanList() {
   const weekday = getWeekday(selectedDate);
   const isToday = selectedDate === today;
 
-  // 用于避免 TypeScript 类型收窄问题
   const isTodayTab = activeTab === 'today';
   const isAllTab = activeTab === 'all';
 
-  // ========== 关键修改：根据日期获取对应的计划 ==========
   const selectedPlan = getPlanForDate(selectedDate);
   const currentPlan = state.plans.find(p => p.id === state.currentPlanId);
   const pendingPlan = state.plans.find(p => p.id === state.pendingPlanId);
@@ -48,7 +46,6 @@ export default function PlanList() {
     p => p.id !== state.currentPlanId && p.id !== state.pendingPlanId
   );
 
-  // ========== 获取当天的记录（key 是日期） ==========
   const getDayRecord = (): DailyPlanRecord => {
     return state.planRecords[selectedDate] || {
       date: selectedDate,
@@ -59,12 +56,9 @@ export default function PlanList() {
 
   const dayRecord = getDayRecord();
 
-  // ========== 更新当天记录 ==========
   const updateDayRecord = (updater: (record: DailyPlanRecord) => DailyPlanRecord) => {
-    // 只允许编辑今天或之前的记录
     if (selectedDate > today) return;
 
-    // 确保今天有计划映射
     const newDailyPlanMap = { ...state.dailyPlanMap };
     if (!newDailyPlanMap[selectedDate] && selectedPlan) {
       newDailyPlanMap[selectedDate] = selectedPlan.id;
@@ -236,7 +230,6 @@ export default function PlanList() {
     setExpandedExercises(new Set());
   };
 
-  // ========== 判断是否可编辑（只有今天和过去可编辑） ==========
   const isEditable = selectedDate <= today;
 
   const renderStrengthExercise = (
@@ -376,7 +369,6 @@ export default function PlanList() {
 
   // 当天计划标签内容
   if (isTodayTab) {
-    // ========== 关键：使用 selectedPlan（根据日期获取的计划） ==========
     const isTrainingDay = selectedPlan?.trainingDays.includes(weekday) || false;
     const isWorkday = selectedPlan?.workdays.includes(weekday) || false;
     const dayTraining = selectedPlan?.weeklyTraining[weekday];
@@ -399,16 +391,12 @@ export default function PlanList() {
 
     const hasScheduleContent = daySchedule && daySchedule.some(item => item.time);
 
-    // 显示计划名称（如果查看的是历史计划，标注出来）
     const showPlanName = selectedPlan?.name || '未知计划';
     const isHistoricalPlan = selectedPlan && currentPlan && selectedPlan.id !== currentPlan.id;
 
     return (
       <div className={styles.page}>
-        <div className={styles.header}>
-          <h1 className={styles.pageTitle}>计划</h1>
-        </div>
-
+        {/* ✨ 移除了标题，只保留标签栏 */}
         <div className={styles.tabBar}>
           <button
             className={`${styles.tab} ${isTodayTab ? styles.active : ''}`}
@@ -611,8 +599,8 @@ export default function PlanList() {
   // 完整计划标签内容
   return (
     <div className={styles.page}>
+      {/* ✨ 移除了标题，只保留新建按钮 */}
       <div className={styles.header}>
-        <h1 className={styles.pageTitle}>计划</h1>
         <button className={styles.newButton} onClick={handleNewPlan}>
           + 新建计划
         </button>
