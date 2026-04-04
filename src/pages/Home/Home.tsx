@@ -51,7 +51,6 @@ const saveDismissedReminder = (id: string) => {
 
 export default function Home() {
   const navigate = useNavigate();
-  // ✅ 改动点 1：从 context 中取 getPlanForDate
   const { state, getPlanForDate } = useAppState();
 
   const [dismissedReminders, setDismissedReminders] = useState<Set<string>>(() => getDismissedReminders());
@@ -66,7 +65,6 @@ export default function Home() {
   const isTrainingDay = currentPlan?.trainingDays.includes(weekday) || false;
   const isWorkday = currentPlan?.workdays.includes(weekday) || false;
 
-  // ✅ 改动点 2：昨天对应的“实际计划”
   const yesterdayPlan = getPlanForDate(yesterday);
 
   const todayCheckin = state.checkins[today];
@@ -139,7 +137,6 @@ export default function Home() {
 
     const WEEKDAY_SHORT = ['日', '一', '二', '三', '四', '五', '六'];
 
-    // 获取最近7天的数据
     for (let i = 6; i >= 0; i--) {
       const dateStr = addDays(today, -i);
       const checkin = state.checkins[dateStr];
@@ -153,12 +150,10 @@ export default function Home() {
       });
     }
 
-    // 提取各指标数据
     const weights = days.map(d => d.weight).filter((v): v is number => v !== undefined);
     const bodyFats = days.map(d => d.bodyFat).filter((v): v is number => v !== undefined);
     const sleeps = days.map(d => d.sleep).filter((v): v is number => v !== undefined);
 
-    // 计算各指标范围（用于归一化）
     const getRange = (values: number[]) => {
       if (values.length === 0) return { min: 0, max: 100, range: 100 };
       const min = Math.min(...values);
@@ -175,14 +170,12 @@ export default function Home() {
     const bodyFatRange = getRange(bodyFats);
     const sleepRange = getRange(sleeps);
 
-    // 归一化函数（将值映射到10-90，留出上下边距）
     const normalize = (value: number | undefined, range: { min: number; max: number; range: number }) => {
       if (value === undefined) return null;
       const normalized = ((value - range.min) / range.range) * 80 + 10;
       return normalized;
     };
 
-    // 生成归一化数据点
     const normalizedDays = days.map(d => ({
       ...d,
       weightNorm: normalize(d.weight, weightRange),
@@ -195,7 +188,6 @@ export default function Home() {
     const hasSleepData = sleeps.length >= 2;
     const hasAnyData = hasWeightData || hasBodyFatData || hasSleepData;
 
-    // 计算变化
     const getChange = (values: number[]) => {
       if (values.length < 2) return { change: 0, trend: 'none' as const };
       const first = values[0];
@@ -232,36 +224,12 @@ export default function Home() {
     };
   }, [state.checkins, today]);
 
-  // ============ 生成 SVG 路径 ============
-  const generatePath = (
-    days: typeof trendData.days,
-    key: 'weightNorm' | 'bodyFatNorm' | 'sleepNorm'
-  ): string => {
-    const points: { x: number; y: number }[] = [];
-    const padding = 10; // 左右留白
-    const width = 100 - padding * 2;
-
-    days.forEach((day, index) => {
-      const value = (day as any)[key];
-      if (value !== null) {
-        const x = padding + (index / (days.length - 1)) * width;
-        const y = 100 - value;
-        points.push({ x, y });
-      }
-    });
-
-    if (points.length < 2) return '';
-    return points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
-  };
-
-  // 计算数据点的 x 坐标
   const getPointX = (index: number): number => {
     const padding = 10;
     const width = 100 - padding * 2;
     return padding + (index / 6) * width;
   };
 
-  // ✅ 改动点 3：昨日提醒用 yesterdayPlan 判断训练日
   const getYesterdayReminders = () => {
     const reminders: { id: string; text: string }[] = [];
 
@@ -309,7 +277,6 @@ export default function Home() {
   const getSystemReminders = () => {
     const reminders: { id: string; text: string }[] = [];
 
-    // 计划切换成功提醒（切换当天显示）
     if (state.lastPlanSwitchDate === today && currentPlan) {
       reminders.push({
         id: 'plan-switched',
@@ -317,7 +284,6 @@ export default function Home() {
       });
     }
 
-    // 待生效计划提醒
     if (pendingPlan && state.pendingPlanDate) {
       reminders.push({
         id: 'pending-plan',
@@ -325,7 +291,6 @@ export default function Home() {
       });
     }
 
-    // 采购提醒
     if (groceryStats.completionRate < 100 && groceryStats.completionRate > 0) {
       reminders.push({
         id: 'grocery-incomplete',
@@ -436,10 +401,7 @@ export default function Home() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <h1 className={styles.pageTitle}>总览</h1>
-      </div>
-
+      {/* ✨ 移除了标题，直接从内容开始 */}
       <div className={styles.content}>
         {/* 顶部提醒区 */}
         {(yesterdayReminders.length > 0 || systemReminders.length > 0) && (
@@ -471,17 +433,19 @@ export default function Home() {
           </div>
         )}
 
-        {/* 今日日期信息卡 */}
+        {/* 今日日期信息卡 - 动态渐变 */}
         <div
           className={styles.dateCard}
           onClick={() => navigate('/plan?tab=today')}
         >
-          <div className={styles.dateMain}>
-            <span className={styles.dateText}>{formatDisplayDate(today)}</span>
-            <span className={styles.weekdayText}>{getWeekdayLabel(weekday)}</span>
-          </div>
-          <div className={styles.dayTypeBadge}>
-            {isTrainingDay ? '🏋️ 训练日' : '😴 放松日'}
+          <div className={styles.dateCardContent}>
+            <div className={styles.dateMain}>
+              <span className={styles.dateText}>{formatDisplayDate(today)}</span>
+              <span className={styles.weekdayText}>{getWeekdayLabel(weekday)}</span>
+            </div>
+            <div className={styles.dayTypeBadge}>
+              {isTrainingDay ? '🏋️ 训练日' : '😴 放松日'}
+            </div>
           </div>
         </div>
 
