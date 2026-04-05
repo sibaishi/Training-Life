@@ -344,10 +344,10 @@
 .dayTabs {
   display: flex;
   gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-md);
+  margin-bottom: 16px;
   overflow-x: auto;
   overflow-y: visible;
-  padding: 2px 0 6px;
+  padding: 4px 2px 12px;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -357,9 +357,10 @@
 
 .dayTab {
   flex-shrink: 0;
-  padding: var(--spacing-sm) var(--spacing-lg);
+  padding: 12px 20px;
   font-size: var(--font-sm);
   font-weight: var(--weight-medium);
+  line-height: 1;
   color: var(--color-text-secondary);
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur) saturate(180%);
@@ -371,14 +372,16 @@
 }
 
 .dayTab:active {
-  transform: scale(0.95);
+  transform: scale(0.96);
 }
 
 .dayTabActive {
   color: white;
   background: var(--gradient-accent);
   border-color: var(--color-accent);
-  box-shadow: var(--shadow-accent);
+  box-shadow:
+    0 4px 10px rgba(52, 199, 89, 0.16),
+    0 1px 4px rgba(52, 199, 89, 0.12);
 }
 
 /* ==================== 空状态 ==================== */
