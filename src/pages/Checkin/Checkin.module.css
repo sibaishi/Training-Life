@@ -12,22 +12,16 @@
   color: white;
   overflow: hidden;
   border-radius: var(--radius-lg);
-  
-  /* 动态渐变背景 */
   background: var(--gradient-accent-animated);
   background-size: 400% 400%;
   animation: gradientWave 8s ease-in-out infinite;
   box-shadow: var(--shadow-accent);
 }
 
-/* 边缘羽化高光层 */
 .header::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: radial-gradient(
     ellipse at center,
     transparent 50%,
@@ -37,7 +31,6 @@
   z-index: 1;
 }
 
-/* 动态光斑层 */
 .header::after {
   content: '';
   position: absolute;
@@ -55,7 +48,6 @@
   z-index: 0;
 }
 
-/* 确保内容在最上层 */
 .header > * {
   position: relative;
   z-index: 2;
@@ -203,8 +195,6 @@
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
   overflow: hidden;
-  
-  /* 毛玻璃效果 */
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur) saturate(180%);
   -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
@@ -213,7 +203,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* 噪点纹理层 */
 .progressCard::before {
   content: '';
   position: absolute;
@@ -269,8 +258,6 @@
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
   overflow: hidden;
-  
-  /* 毛玻璃效果 */
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur) saturate(180%);
   -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
@@ -279,7 +266,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* 噪点纹理层 */
 .card::before {
   content: '';
   position: absolute;
@@ -433,7 +419,7 @@
 }
 
 .fixedItemInput {
-  width: 80px;
+  width: 88px;
   padding: var(--spacing-sm);
   font-size: var(--font-lg);
   font-weight: var(--weight-semibold);
@@ -442,7 +428,8 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   font-variant-numeric: tabular-nums;
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), color var(--transition-fast);
+  color: var(--color-text-primary);
 }
 
 .fixedItemInput:focus {
@@ -450,15 +437,35 @@
   box-shadow: 0 0 0 3px var(--color-accent-soft);
 }
 
+.defaultValue {
+  color: var(--color-text-tertiary) !important;
+}
+
+/* ==================== 睡眠项 ==================== */
 .sleepItem {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
 }
 
-.sleepRow {
+.sleepProgressBar {
+  height: 8px;
+  background: var(--color-divider);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.sleepProgressFill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sleepMetaRow {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--spacing-md);
 }
 
@@ -472,7 +479,8 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   font-variant-numeric: tabular-nums;
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), color var(--transition-fast);
+  color: var(--color-text-primary);
 }
 
 .sleepInput:focus {
@@ -483,19 +491,8 @@
 .sleepTarget {
   font-size: var(--font-sm);
   color: var(--color-text-secondary);
-}
-
-.sleepProgressBar {
-  height: 6px;
-  background: var(--color-divider);
-  border-radius: var(--radius-full);
-  overflow: hidden;
-}
-
-.sleepProgressFill {
-  height: 100%;
-  border-radius: var(--radius-full);
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: right;
+  white-space: nowrap;
 }
 
 /* ==================== 执行清单 ==================== */
@@ -606,10 +603,7 @@
 /* ==================== 弹窗 - 毛玻璃 ==================== */
 .modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
@@ -624,8 +618,6 @@
   width: 100%;
   max-width: 400px;
   overflow: hidden;
-  
-  /* 毛玻璃效果 */
   background: var(--glass-bg-strong);
   backdrop-filter: var(--glass-blur) saturate(180%);
   -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
@@ -659,11 +651,6 @@
   border: none;
   border-radius: var(--radius-full);
   cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.modalCloseBtn:hover {
-  background: var(--color-surface-secondary);
 }
 
 .modalBody {
@@ -693,7 +680,6 @@
   background: var(--color-surface-secondary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  transition: border-color var(--transition-fast);
 }
 
 .formInput:focus {
@@ -716,11 +702,6 @@
   border: 2px solid var(--color-border);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.dayBtn:active {
-  transform: scale(0.92);
 }
 
 .dayBtnActive {
@@ -741,33 +722,23 @@
   flex: 1;
   padding: var(--spacing-md);
   font-size: var(--font-base);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   color: var(--color-text-primary);
   background: var(--color-surface-secondary);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.modalCancelBtn:active {
-  transform: scale(0.97);
 }
 
 .modalConfirmBtn {
   flex: 1;
   padding: var(--spacing-md);
   font-size: var(--font-base);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-medium);
   color: white;
   background: var(--gradient-accent);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
   box-shadow: var(--shadow-accent);
-  transition: all var(--transition-fast);
-}
-
-.modalConfirmBtn:active {
-  transform: scale(0.97);
 }
