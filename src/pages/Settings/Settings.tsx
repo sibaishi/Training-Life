@@ -466,7 +466,7 @@ export default function Settings() {
           <div className={styles.card}>
             <div className={styles.aboutRow}>
               <span>版本</span>
-              <span>v2.0.0</span>
+              <span>v2.0.1</span>
             </div>
             <div className={styles.aboutRow}>
               <span>作者</span>
