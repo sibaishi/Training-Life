@@ -4,19 +4,26 @@ import { ThemeMode } from '../../types';
 import { getDefaultState, normalizeState } from '../../utils/storage';
 import styles from './Settings.module.css';
 
+function formatDisplayDay(dateString?: string) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return '';
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}/${m}/${d}`;
+}
+
 function MaleAvatar() {
   return (
     <svg viewBox="0 0 120 120" className={styles.avatarSvg} aria-hidden="true">
       <g fill="none">
-        {/* 头发/上轮廓 */}
         <path
           d="M34 43c0-15 12-27 26-27 13 0 25 10 27 24-6-5-13-7-21-7-9 0-18 3-26 10z"
           fill="currentColor"
           fillOpacity="0.26"
         />
-        {/* 脸 */}
         <circle cx="60" cy="46" r="18" fill="currentColor" fillOpacity="0.9" />
-        {/* 身体 */}
         <path
           d="M28 97c3-15 16-26 32-26s29 11 32 26"
           fill="currentColor"
@@ -31,15 +38,12 @@ function FemaleAvatar() {
   return (
     <svg viewBox="0 0 120 120" className={styles.avatarSvg} aria-hidden="true">
       <g fill="none">
-        {/* 长发外轮廓 */}
         <path
           d="M27 48c0-21 15-34 33-34s33 13 33 34c0 10-3 19-7 28H34c-4-9-7-18-7-28z"
           fill="currentColor"
           fillOpacity="0.22"
         />
-        {/* 脸 */}
         <circle cx="60" cy="44" r="16.5" fill="currentColor" fillOpacity="0.92" />
-        {/* 身体 */}
         <path
           d="M30 98c4-14 15-24 30-24s26 10 30 24"
           fill="currentColor"
@@ -163,7 +167,7 @@ export default function Settings() {
       return;
     }
 
-    const today = new Date().toISOString();
+    const now = new Date().toISOString();
 
     setState(prev => ({
       ...prev,
@@ -172,7 +176,7 @@ export default function Settings() {
         baselineWeight: w,
         baselineBodyFat: bf,
         baselineSetManually: true,
-        baselineUpdatedAt: prev.profile.baselineUpdatedAt ?? today,
+        baselineUpdatedAt: prev.profile.baselineUpdatedAt ?? now,
       },
     }));
 
@@ -390,8 +394,14 @@ export default function Settings() {
               </button>
             ) : (
               <div className={styles.lockedHint}>
-                基线已锁定，无法手动修改。请在「打卡」中填写最新体重/体脂；当你切换计划并生效时，系统会自动用最新打卡数据更新基线。
-                {profile.baselineUpdatedAt ? `（最后更新时间：${profile.baselineUpdatedAt}）` : ''}
+                <div className={styles.lockedHintText}>
+                  基线已锁定，无法手动修改。请在「打卡」中填写最新体重/体脂；当你切换计划并生效时，系统会自动用最新打卡数据更新基线。
+                </div>
+                {profile.baselineUpdatedAt && (
+                  <div className={styles.lockedHintDate}>
+                    最后更新时间：{formatDisplayDay(profile.baselineUpdatedAt)}
+                  </div>
+                )}
               </div>
             )}
 
@@ -441,7 +451,7 @@ export default function Settings() {
               <span className={styles.actionArrow}>›</span>
             </button>
 
-            <button className={`${styles.actionBtn} ${styles.actionBtnDanger}`} onClick={() => setShowCleanModal(true)}>
+            <button className={`${styles.actionBtn} ${styles.actionBtnDanger} ${styles.actionBtnLast}`} onClick={() => setShowCleanModal(true)}>
               <span>🧹 清理数据</span>
               <span className={styles.actionArrow}>›</span>
             </button>
@@ -579,7 +589,7 @@ export default function Settings() {
                 ) : (
                   state.baselineHistory.map((h, i) => (
                     <div key={i} className={styles.historyItem}>
-                      <div className={styles.historyDate}>{h.date}</div>
+                      <div className={styles.historyDate}>{formatDisplayDay(h.date) || h.date}</div>
                       <div className={styles.historyDetail}>
                         {h.fromPlan} → {h.toPlan}
                       </div>
