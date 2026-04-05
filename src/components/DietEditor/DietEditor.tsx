@@ -1,4 +1,3 @@
-// DietEditor.tsx
 import React, { useState } from 'react';
 import { DayDietPlan, FoodItem, MealType, MEAL_ORDER, MEAL_LABELS } from '../../types';
 import { generateId } from '../../utils/id';
@@ -11,6 +10,13 @@ interface DietEditorProps {
 }
 
 type DayType = 'training' | 'rest';
+
+// 工具函数：规范化数字输入
+const normalizeNumber = (value: string, isInteger: boolean = true): number => {
+  if (!value || value === '') return 0;
+  const num = isInteger ? parseInt(value, 10) : parseFloat(value);
+  return isNaN(num) ? 0 : num;
+};
 
 export default function DietEditor({
   trainingDayDiet,
@@ -132,9 +138,18 @@ export default function DietEditor({
                         className={styles.quantityInput}
                         type="number"
                         min="0"
+                        step="0.1"
                         placeholder="数量"
-                        value={food.quantity || ''}
-                        onChange={e => updateFoodItem(mealType, food.id, { quantity: parseFloat(e.target.value) || 0 })}
+                        value={food.quantity === 0 ? '' : food.quantity}
+                        onChange={e => updateFoodItem(mealType, food.id, { 
+                          quantity: parseFloat(e.target.value) || 0 
+                        })}
+                        onBlur={e => {
+                          const normalized = normalizeNumber(e.target.value, false);
+                          if (normalized !== food.quantity) {
+                            updateFoodItem(mealType, food.id, { quantity: normalized });
+                          }
+                        }}
                       />
                       <select
                         className={styles.unitSelect}

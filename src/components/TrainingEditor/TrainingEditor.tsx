@@ -6,9 +6,16 @@ import styles from './TrainingEditor.module.css';
 
 interface TrainingEditorProps {
   trainingDays: Weekday[];
-  weeklyTraining: Record<number, DayTrainingPlan>; // 改为按天存储，不按周
+  weeklyTraining: Record<number, DayTrainingPlan>;
   onChange: (weeklyTraining: Record<number, DayTrainingPlan>) => void;
 }
+
+// 工具函数：规范化数字输入
+const normalizeNumber = (value: string, isInteger: boolean = true): number => {
+  if (!value || value === '') return 0;
+  const num = isInteger ? parseInt(value, 10) : parseFloat(value);
+  return isNaN(num) ? 0 : num;
+};
 
 export default function TrainingEditor({
   trainingDays,
@@ -164,24 +171,48 @@ export default function TrainingEditor({
                   type="number"
                   min="1"
                   placeholder="组"
-                  value={ex.sets}
-                  onChange={e => updateStrengthExercise(currentDay, 'primary', ex.id, { sets: parseInt(e.target.value) || 0 })}
+                  value={ex.sets === 0 ? '' : ex.sets}
+                  onChange={e => updateStrengthExercise(currentDay, 'primary', ex.id, { 
+                    sets: parseInt(e.target.value) || 0 
+                  })}
+                  onBlur={e => {
+                    const normalized = normalizeNumber(e.target.value, true);
+                    if (normalized !== ex.sets) {
+                      updateStrengthExercise(currentDay, 'primary', ex.id, { sets: normalized });
+                    }
+                  }}
                 />
                 <input
                   className={styles.smallInput}
                   type="number"
                   min="1"
                   placeholder="次"
-                  value={ex.reps}
-                  onChange={e => updateStrengthExercise(currentDay, 'primary', ex.id, { reps: parseInt(e.target.value) || 0 })}
+                  value={ex.reps === 0 ? '' : ex.reps}
+                  onChange={e => updateStrengthExercise(currentDay, 'primary', ex.id, { 
+                    reps: parseInt(e.target.value) || 0 
+                  })}
+                  onBlur={e => {
+                    const normalized = normalizeNumber(e.target.value, true);
+                    if (normalized !== ex.reps) {
+                      updateStrengthExercise(currentDay, 'primary', ex.id, { reps: normalized });
+                    }
+                  }}
                 />
                 <input
                   className={styles.smallInput}
                   type="number"
                   min="0"
                   placeholder="休息(秒)"
-                  value={ex.restSeconds}
-                  onChange={e => updateStrengthExercise(currentDay, 'primary', ex.id, { restSeconds: parseInt(e.target.value) || 0 })}
+                  value={ex.restSeconds === 0 ? '' : ex.restSeconds}
+                  onChange={e => updateStrengthExercise(currentDay, 'primary', ex.id, { 
+                    restSeconds: parseInt(e.target.value) || 0 
+                  })}
+                  onBlur={e => {
+                    const normalized = normalizeNumber(e.target.value, true);
+                    if (normalized !== ex.restSeconds) {
+                      updateStrengthExercise(currentDay, 'primary', ex.id, { restSeconds: normalized });
+                    }
+                  }}
                 />
                 <label className={styles.checkbox}>
                   <input
@@ -230,24 +261,48 @@ export default function TrainingEditor({
                   type="number"
                   min="1"
                   placeholder="组"
-                  value={ex.sets}
-                  onChange={e => updateStrengthExercise(currentDay, 'secondary', ex.id, { sets: parseInt(e.target.value) || 0 })}
+                  value={ex.sets === 0 ? '' : ex.sets}
+                  onChange={e => updateStrengthExercise(currentDay, 'secondary', ex.id, { 
+                    sets: parseInt(e.target.value) || 0 
+                  })}
+                  onBlur={e => {
+                    const normalized = normalizeNumber(e.target.value, true);
+                    if (normalized !== ex.sets) {
+                      updateStrengthExercise(currentDay, 'secondary', ex.id, { sets: normalized });
+                    }
+                  }}
                 />
                 <input
                   className={styles.smallInput}
                   type="number"
                   min="1"
                   placeholder="次"
-                  value={ex.reps}
-                  onChange={e => updateStrengthExercise(currentDay, 'secondary', ex.id, { reps: parseInt(e.target.value) || 0 })}
+                  value={ex.reps === 0 ? '' : ex.reps}
+                  onChange={e => updateStrengthExercise(currentDay, 'secondary', ex.id, { 
+                    reps: parseInt(e.target.value) || 0 
+                  })}
+                  onBlur={e => {
+                    const normalized = normalizeNumber(e.target.value, true);
+                    if (normalized !== ex.reps) {
+                      updateStrengthExercise(currentDay, 'secondary', ex.id, { reps: normalized });
+                    }
+                  }}
                 />
                 <input
                   className={styles.smallInput}
                   type="number"
                   min="0"
                   placeholder="休息(秒)"
-                  value={ex.restSeconds}
-                  onChange={e => updateStrengthExercise(currentDay, 'secondary', ex.id, { restSeconds: parseInt(e.target.value) || 0 })}
+                  value={ex.restSeconds === 0 ? '' : ex.restSeconds}
+                  onChange={e => updateStrengthExercise(currentDay, 'secondary', ex.id, { 
+                    restSeconds: parseInt(e.target.value) || 0 
+                  })}
+                  onBlur={e => {
+                    const normalized = normalizeNumber(e.target.value, true);
+                    if (normalized !== ex.restSeconds) {
+                      updateStrengthExercise(currentDay, 'secondary', ex.id, { restSeconds: normalized });
+                    }
+                  }}
                 />
                 <label className={styles.checkbox}>
                   <input
@@ -296,8 +351,16 @@ export default function TrainingEditor({
                   type="number"
                   min="1"
                   placeholder="时长(分钟)"
-                  value={ex.durationMinutes}
-                  onChange={e => updateCardioExercise(currentDay, ex.id, { durationMinutes: parseInt(e.target.value) || 0 })}
+                  value={ex.durationMinutes === 0 ? '' : ex.durationMinutes}
+                  onChange={e => updateCardioExercise(currentDay, ex.id, { 
+                    durationMinutes: parseInt(e.target.value) || 0 
+                  })}
+                  onBlur={e => {
+                    const normalized = normalizeNumber(e.target.value, true);
+                    if (normalized !== ex.durationMinutes) {
+                      updateCardioExercise(currentDay, ex.id, { durationMinutes: normalized });
+                    }
+                  }}
                 />
                 <button
                   className={styles.removeButton}

@@ -742,3 +742,23 @@
   cursor: pointer;
   box-shadow: var(--shadow-accent);
 }
+
+/* ==================== 输入框占位符样式修复 ==================== */
+.fixedItemInput::placeholder,
+.sleepInput::placeholder,
+.waterInput::placeholder {
+  color: var(--color-text-tertiary);
+  opacity: 0.6;
+}
+
+/* 当输入框有内容时，移除默认值样式 */
+.fixedItemInput:not(:placeholder-shown),
+.sleepInput:not(:placeholder-shown) {
+  color: var(--color-text-primary) !important;
+}
+
+/* 确保聚焦时颜色正常 */
+.fixedItemInput:focus,
+.sleepInput:focus {
+  color: var(--color-text-primary) !important;
+}

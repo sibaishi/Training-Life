@@ -19,6 +19,13 @@ import {
 } from '../../types';
 import styles from './Checkin.module.css';
 
+// 工具函数：规范化数字输入
+const normalizeNumber = (value: string, isInteger: boolean = true): number => {
+  if (!value || value === '') return 0;
+  const num = isInteger ? parseInt(value, 10) : parseFloat(value);
+  return isNaN(num) ? 0 : num;
+};
+
 export default function CheckinMain() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -486,6 +493,12 @@ export default function CheckinMain() {
                     className={styles.waterInput}
                     value={waterAmount}
                     onChange={(e) => setWaterAmount(e.target.value)}
+                    onBlur={(e) => {
+                      if (e.target.value) {
+                        const normalized = normalizeNumber(e.target.value, true);
+                        setWaterAmount(normalized > 0 ? normalized.toString() : '');
+                      }
+                    }}
                     placeholder="输入毫升数"
                   />
                   <button className={styles.waterAddBtn} onClick={handleAddWater}>
@@ -510,16 +523,27 @@ export default function CheckinMain() {
                 min="0"
                 max="500"
                 className={`${styles.fixedItemInput} ${displayDefaults.weightIsDefault ? styles.defaultValue : ''}`}
-                value={dayCheckin.weight !== undefined ? dayCheckin.weight : (displayDefaults.weightDisplay ?? '')}
+                value={dayCheckin.weight ?? ''}
                 onChange={(e) => {
                   const val = e.target.value;
                   if (val === '') {
                     updateFixedItem('weight', undefined);
                   } else {
-                    updateFixedItem('weight', parseFloat(val));
+                    const num = parseFloat(val);
+                    if (!isNaN(num)) {
+                      updateFixedItem('weight', num);
+                    }
                   }
                 }}
-                placeholder="--"
+                onBlur={(e) => {
+                  if (e.target.value && dayCheckin.weight !== undefined) {
+                    const normalized = normalizeNumber(e.target.value, false);
+                    if (normalized >= 0 && normalized <= 500) {
+                      updateFixedItem('weight', normalized);
+                    }
+                  }
+                }}
+                placeholder={displayDefaults.weightDisplay !== undefined ? `${displayDefaults.weightDisplay}` : '--'}
                 disabled={!isEditable}
               />
             </div>
@@ -532,16 +556,27 @@ export default function CheckinMain() {
                 min="0"
                 max="100"
                 className={`${styles.fixedItemInput} ${displayDefaults.bodyFatIsDefault ? styles.defaultValue : ''}`}
-                value={dayCheckin.bodyFat !== undefined ? dayCheckin.bodyFat : (displayDefaults.bodyFatDisplay ?? '')}
+                value={dayCheckin.bodyFat ?? ''}
                 onChange={(e) => {
                   const val = e.target.value;
                   if (val === '') {
                     updateFixedItem('bodyFat', undefined);
                   } else {
-                    updateFixedItem('bodyFat', parseFloat(val));
+                    const num = parseFloat(val);
+                    if (!isNaN(num)) {
+                      updateFixedItem('bodyFat', num);
+                    }
                   }
                 }}
-                placeholder="--"
+                onBlur={(e) => {
+                  if (e.target.value && dayCheckin.bodyFat !== undefined) {
+                    const normalized = normalizeNumber(e.target.value, false);
+                    if (normalized >= 0 && normalized <= 100) {
+                      updateFixedItem('bodyFat', normalized);
+                    }
+                  }
+                }}
+                placeholder={displayDefaults.bodyFatDisplay !== undefined ? `${displayDefaults.bodyFatDisplay}` : '--'}
                 disabled={!isEditable}
               />
             </div>
@@ -569,16 +604,27 @@ export default function CheckinMain() {
                 min="0"
                 max="24"
                 className={`${styles.sleepInput} ${displayDefaults.sleepIsDefault ? styles.defaultValue : ''}`}
-                value={dayCheckin.sleepHours !== undefined ? dayCheckin.sleepHours : displayDefaults.sleepDisplay}
+                value={dayCheckin.sleepHours ?? ''}
                 onChange={(e) => {
                   const val = e.target.value;
                   if (val === '') {
                     updateFixedItem('sleepHours', undefined);
                   } else {
-                    updateFixedItem('sleepHours', parseFloat(val));
+                    const num = parseFloat(val);
+                    if (!isNaN(num)) {
+                      updateFixedItem('sleepHours', num);
+                    }
                   }
                 }}
-                placeholder="0"
+                onBlur={(e) => {
+                  if (e.target.value && dayCheckin.sleepHours !== undefined) {
+                    const normalized = normalizeNumber(e.target.value, false);
+                    if (normalized >= 0 && normalized <= 24) {
+                      updateFixedItem('sleepHours', normalized);
+                    }
+                  }
+                }}
+                placeholder={displayDefaults.sleepDisplay > 0 ? `${displayDefaults.sleepDisplay}` : '0'}
                 disabled={!isEditable}
               />
               <span className={styles.sleepTarget}>目标：7.5 小时</span>

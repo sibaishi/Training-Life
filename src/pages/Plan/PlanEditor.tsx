@@ -36,6 +36,13 @@ const getDefaultSchedule = (): SchedulePlan => ({
   weekend: WEEKEND_SCHEDULE_KEYS.map(k => ({ key: k.key, label: k.label, time: '' })),
 });
 
+// 工具函数：规范化数字输入
+const normalizeNumber = (value: string, isInteger: boolean = true): number => {
+  if (!value || value === '') return 0;
+  const num = isInteger ? parseInt(value, 10) : parseFloat(value);
+  return isNaN(num) ? 0 : num;
+};
+
 export default function PlanEditor() {
   const navigate = useNavigate();
   const { planId } = useParams();
@@ -253,6 +260,12 @@ export default function PlanEditor() {
                 setTargetWeight(e.target.value);
                 setHasUnsavedChanges(true);
               }}
+              onBlur={(e) => {
+                if (e.target.value) {
+                  const normalized = normalizeNumber(e.target.value, false);
+                  setTargetWeight(normalized > 0 ? normalized.toString() : '');
+                }
+              }}
               placeholder="例如：70.5"
             />
           </FormField>
@@ -266,6 +279,12 @@ export default function PlanEditor() {
               onChange={(e) => {
                 setTargetBodyFat(e.target.value);
                 setHasUnsavedChanges(true);
+              }}
+              onBlur={(e) => {
+                if (e.target.value) {
+                  const normalized = normalizeNumber(e.target.value, false);
+                  setTargetBodyFat(normalized > 0 ? normalized.toString() : '');
+                }
               }}
               placeholder="例如：15.0"
             />
@@ -394,6 +413,18 @@ export default function PlanEditor() {
             max="52"
             value={totalWeeks}
             onChange={(e) => setTotalWeeks(e.target.value)}
+            onBlur={(e) => {
+              if (e.target.value) {
+                const normalized = normalizeNumber(e.target.value, true);
+                if (normalized >= 1 && normalized <= 52) {
+                  setTotalWeeks(normalized.toString());
+                } else if (normalized < 1) {
+                  setTotalWeeks('1');
+                } else {
+                  setTotalWeeks('52');
+                }
+              }
+            }}
             placeholder="输入周数（1-52）"
           />
         </FormField>
