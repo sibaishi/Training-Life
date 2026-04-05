@@ -54,7 +54,6 @@ export default function Home() {
   const { state, getPlanForDate } = useAppState();
 
   const [dismissedReminders, setDismissedReminders] = useState<Set<string>>(() => getDismissedReminders());
-  const [showBodyDetail, setShowBodyDetail] = useState(false);
 
   const today = getTodayString();
   const yesterday = addDays(today, -1);
@@ -63,14 +62,12 @@ export default function Home() {
   const currentPlan = state.plans.find(p => p.id === state.currentPlanId);
   const pendingPlan = state.plans.find(p => p.id === state.pendingPlanId);
   const isTrainingDay = currentPlan?.trainingDays.includes(weekday) || false;
-  const isWorkday = currentPlan?.workdays.includes(weekday) || false;
 
   const yesterdayPlan = getPlanForDate(yesterday);
 
   const todayCheckin = state.checkins[today];
   const yesterdayCheckin = state.checkins[yesterday];
 
-  // ============ 采购数据计算 ============
   const groceryStats = useMemo(() => {
     if (!currentPlan) {
       return { completionRate: 0, weekCost: 0, monthCost: 0 };
@@ -125,7 +122,6 @@ export default function Home() {
     return { completionRate, weekCost, monthCost };
   }, [currentPlan, state.groceries]);
 
-  // ============ 趋势数据计算 ============
   const trendData = useMemo(() => {
     const days: {
       date: string;
@@ -401,9 +397,7 @@ export default function Home() {
 
   return (
     <div className={styles.page}>
-      {/* ✨ 移除了标题，直接从内容开始 */}
       <div className={styles.content}>
-        {/* 顶部提醒区 */}
         {(yesterdayReminders.length > 0 || systemReminders.length > 0) && (
           <div className={styles.remindersSection}>
             {yesterdayReminders.map(reminder => (
@@ -433,7 +427,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* 今日日期信息卡 - 动态渐变 */}
+        {/* 日期卡 */}
         <div
           className={styles.dateCard}
           onClick={() => navigate('/plan?tab=today')}
@@ -447,6 +441,58 @@ export default function Home() {
               {isTrainingDay ? '🏋️ 训练日' : '😴 放松日'}
             </div>
           </div>
+        </div>
+
+        {/* 身体状态卡 - 作为首页视觉中心，默认展开 */}
+        <div className={styles.card}>
+          <div className={styles.cardHeader}>
+            <span className={styles.cardTitle}>📊 身体状态</span>
+          </div>
+
+          <div className={styles.bodyStats}>
+            <div className={styles.bodyStat}>
+              <span className={styles.bodyStatValue}>
+                {latestBody.weight !== undefined ? `${latestBody.weight}` : '--'}
+              </span>
+              <span className={styles.bodyStatLabel}>当前体重 (kg)</span>
+            </div>
+            <div className={styles.bodyStatDivider}></div>
+            <div className={styles.bodyStat}>
+              <span className={styles.bodyStatValue}>
+                {latestBody.bodyFat !== undefined ? `${latestBody.bodyFat}` : '--'}
+              </span>
+              <span className={styles.bodyStatLabel}>当前体脂率 (%)</span>
+            </div>
+          </div>
+
+          {currentPlan && (
+            <div className={styles.bodyDetail}>
+              <div className={styles.bodyDetailRow}>
+                <span>目标体重</span>
+                <span>{currentPlan.targetWeight ?? '--'} kg</span>
+              </div>
+              <div className={styles.bodyDetailRow}>
+                <span>目标体脂率</span>
+                <span>{currentPlan.targetBodyFat ?? '--'} %</span>
+              </div>
+              {latestBody.weight !== undefined && currentPlan.targetWeight !== undefined && (
+                <div className={styles.bodyDetailRow}>
+                  <span>体重差值</span>
+                  <span className={latestBody.weight > currentPlan.targetWeight ? styles.negative : styles.positive}>
+                    {(latestBody.weight - currentPlan.targetWeight).toFixed(1)} kg
+                  </span>
+                </div>
+              )}
+              {latestBody.bodyFat !== undefined && currentPlan.targetBodyFat !== undefined && (
+                <div className={styles.bodyDetailRow}>
+                  <span>体脂率差值</span>
+                  <span className={latestBody.bodyFat > currentPlan.targetBodyFat ? styles.negative : styles.positive}>
+                    {(latestBody.bodyFat - currentPlan.targetBodyFat).toFixed(1)} %
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* 当前启用计划卡 */}
@@ -472,61 +518,6 @@ export default function Home() {
             </div>
           ) : (
             <div className={styles.emptyHint}>暂无启用的计划</div>
-          )}
-        </div>
-
-        {/* 当前身体状态摘要卡 */}
-        <div
-          className={styles.card}
-          onClick={() => setShowBodyDetail(!showBodyDetail)}
-        >
-          <div className={styles.cardHeader}>
-            <span className={styles.cardTitle}>📊 身体状态</span>
-            <span className={styles.expandIcon}>{showBodyDetail ? '▼' : '▶'}</span>
-          </div>
-          <div className={styles.bodyStats}>
-            <div className={styles.bodyStat}>
-              <span className={styles.bodyStatValue}>
-                {latestBody.weight !== undefined ? `${latestBody.weight}` : '--'}
-              </span>
-              <span className={styles.bodyStatLabel}>体重 (kg)</span>
-            </div>
-            <div className={styles.bodyStatDivider}></div>
-            <div className={styles.bodyStat}>
-              <span className={styles.bodyStatValue}>
-                {latestBody.bodyFat !== undefined ? `${latestBody.bodyFat}` : '--'}
-              </span>
-              <span className={styles.bodyStatLabel}>体脂率 (%)</span>
-            </div>
-          </div>
-
-          {showBodyDetail && currentPlan && (
-            <div className={styles.bodyDetail}>
-              <div className={styles.bodyDetailRow}>
-                <span>目标体重</span>
-                <span>{currentPlan.targetWeight ?? '--'} kg</span>
-              </div>
-              <div className={styles.bodyDetailRow}>
-                <span>目标体脂率</span>
-                <span>{currentPlan.targetBodyFat ?? '--'} %</span>
-              </div>
-              {latestBody.weight && currentPlan.targetWeight && (
-                <div className={styles.bodyDetailRow}>
-                  <span>体重差值</span>
-                  <span className={latestBody.weight > currentPlan.targetWeight ? styles.negative : styles.positive}>
-                    {(latestBody.weight - currentPlan.targetWeight).toFixed(1)} kg
-                  </span>
-                </div>
-              )}
-              {latestBody.bodyFat && currentPlan.targetBodyFat && (
-                <div className={styles.bodyDetailRow}>
-                  <span>体脂率差值</span>
-                  <span className={latestBody.bodyFat > currentPlan.targetBodyFat ? styles.negative : styles.positive}>
-                    {(latestBody.bodyFat - currentPlan.targetBodyFat).toFixed(1)} %
-                  </span>
-                </div>
-              )}
-            </div>
           )}
         </div>
 
@@ -570,7 +561,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* 采购/费用概览卡 */}
+        {/* 采购概览卡 */}
         <div
           className={styles.card}
           onClick={() => navigate('/grocery')}
@@ -603,7 +594,7 @@ export default function Home() {
           )}
         </div>
 
-        {/* 趋势摘要卡 - 三线折线图 */}
+        {/* 趋势摘要卡 */}
         <div
           className={styles.card}
           onClick={() => navigate('/trend')}
