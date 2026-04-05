@@ -179,13 +179,22 @@
 }
 
 .lockedHint {
-  margin: 12px 16px 0;
-  padding: 12px 14px;
+  margin: 14px 16px 16px;
+  padding: 14px 14px 12px;
   font-size: 12px;
   color: var(--color-text-tertiary);
   line-height: 1.7;
   background: rgba(127, 127, 127, 0.08);
   border-radius: var(--radius-md);
+}
+
+.lockedHintText {
+  margin-bottom: 8px;
+}
+
+.lockedHintDate {
+  font-size: 12px;
+  color: var(--color-text-secondary);
 }
 
 /* ==================== 主题设置 ==================== */
@@ -236,16 +245,16 @@
   transition: background var(--transition-fast), opacity var(--transition-fast);
 }
 
-.actionBtn:last-child {
-  border-bottom: none;
-}
-
 .actionBtn:active {
   background: rgba(0, 0, 0, 0.03);
 }
 
 .actionBtnDanger {
   color: var(--color-danger);
+}
+
+.actionBtnLast {
+  border-bottom: none;
 }
 
 .actionArrow {
