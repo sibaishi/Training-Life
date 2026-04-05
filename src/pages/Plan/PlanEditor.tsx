@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppState } from '../../contexts/AppContext';
 import { generateId } from '../../utils/id';
-import { getTodayString, getWeekdayLabel } from '../../utils/date';
+import { getWeekdayLabel } from '../../utils/date';
 import {
   Plan,
   Weekday,
@@ -23,6 +23,10 @@ import editorStyles from './PlanEditor.module.css';
 
 const WEEKDAYS: Weekday[] = [1, 2, 3, 4, 5, 6, 0];
 
+const sortWeekdays = (days: Weekday[]) => {
+  return [...days].sort((a, b) => WEEKDAYS.indexOf(a) - WEEKDAYS.indexOf(b));
+};
+
 const getEmptyDiet = (): DayDietPlan => ({
   meals: Object.fromEntries(MEAL_ORDER.map(m => [m, []])) as any,
 });
@@ -36,7 +40,7 @@ export default function PlanEditor() {
   const navigate = useNavigate();
   const { planId } = useParams();
   const { state, setState, setIsEditing } = useAppState();
-  
+
   const [showBasicInfoModal, setShowBasicInfoModal] = useState(!planId);
   const [planName, setPlanName] = useState('新建计划');
   const [totalWeeks, setTotalWeeks] = useState('');
@@ -67,8 +71,8 @@ export default function PlanEditor() {
         setTotalWeeks(plan.totalWeeks.toString());
         setTargetWeight(plan.targetWeight?.toString() || '');
         setTargetBodyFat(plan.targetBodyFat?.toString() || '');
-        setTrainingDays(plan.trainingDays || []);
-        setWorkdays(plan.workdays || [1, 2, 3, 4, 5]);
+        setTrainingDays(sortWeekdays(plan.trainingDays || []));
+        setWorkdays(sortWeekdays(plan.workdays || [1, 2, 3, 4, 5]));
         setWeeklyTraining(plan.weeklyTraining || {});
         setTrainingDayDiet(plan.trainingDayDiet || getEmptyDiet());
         setRestDayDiet(plan.restDayDiet || getEmptyDiet());
@@ -125,22 +129,20 @@ export default function PlanEditor() {
 
   const toggleTrainingDay = (day: Weekday) => {
     setTrainingDays(prev => {
-      if (prev.includes(day)) {
-        return prev.filter(d => d !== day);
-      } else {
-        return [...prev, day];
-      }
+      const next = prev.includes(day)
+        ? prev.filter(d => d !== day)
+        : [...prev, day];
+      return sortWeekdays(next);
     });
     setHasUnsavedChanges(true);
   };
 
   const toggleWorkday = (day: Weekday) => {
     setWorkdays(prev => {
-      if (prev.includes(day)) {
-        return prev.filter(d => d !== day);
-      } else {
-        return [...prev, day];
-      }
+      const next = prev.includes(day)
+        ? prev.filter(d => d !== day)
+        : [...prev, day];
+      return sortWeekdays(next);
     });
     setHasUnsavedChanges(true);
   };
@@ -159,14 +161,14 @@ export default function PlanEditor() {
       id: newPlanId,
       name: planName,
       totalWeeks: parseInt(totalWeeks),
-      createdAt: planId 
-        ? (state.plans.find(p => p.id === planId)?.createdAt || now) 
+      createdAt: planId
+        ? (state.plans.find(p => p.id === planId)?.createdAt || now)
         : now,
       updatedAt: now,
       targetWeight: targetWeight ? parseFloat(targetWeight) : undefined,
       targetBodyFat: targetBodyFat ? parseFloat(targetBodyFat) : undefined,
-      trainingDays,
-      workdays,
+      trainingDays: sortWeekdays(trainingDays),
+      workdays: sortWeekdays(workdays),
       weeklyTraining,
       trainingDayDiet,
       restDayDiet,
@@ -186,12 +188,11 @@ export default function PlanEditor() {
 
     setHasUnsavedChanges(false);
     alert('保存成功');
-    
+
     setIsEditing(false);
     navigate(`/plan/${newPlanId}`);
   };
 
-  // ✨ 退出时根据是否有 planId 返回不同页面
   const handleExit = () => {
     if (hasUnsavedChanges) {
       const confirmMessage = '有未保存的修改，是否退出？\n\n点击"确定"退出（不保存）\n点击"取消"留在编辑页';
@@ -200,8 +201,7 @@ export default function PlanEditor() {
       }
     }
     setIsEditing(false);
-    
-    // 如果是编辑现有计划，返回该计划的查看页
+
     if (planId) {
       navigate(`/plan/${planId}`);
     } else {
