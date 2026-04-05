@@ -147,8 +147,6 @@
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
   overflow: hidden;
-  
-  /* 毛玻璃效果 */
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur) saturate(180%);
   -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
@@ -157,7 +155,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* 噪点纹理层 */
 .card::before {
   content: '';
   position: absolute;
@@ -182,8 +179,6 @@
   color: var(--color-text-tertiary);
   font-size: var(--font-sm);
   overflow: hidden;
-  
-  /* 毛玻璃效果 */
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur) saturate(180%);
   -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
@@ -345,13 +340,14 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ==================== 日期标签切换 - 优化 ==================== */
+/* ==================== 日期标签切换 - 修复阴影裁切 ==================== */
 .dayTabs {
   display: flex;
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
   overflow-x: auto;
-  padding-bottom: var(--spacing-xs);
+  overflow-y: visible;
+  padding: 2px 0 6px;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -415,13 +411,10 @@
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
-  
-  /* 动态渐变 */
   background: var(--gradient-accent-animated);
   background-size: 400% 400%;
   animation: gradientWave 8s ease-in-out infinite;
   box-shadow: var(--shadow-accent);
-  
   transition: all var(--transition-fast);
 }
 
