@@ -3,9 +3,6 @@
   background: var(--color-bg);
 }
 
-/* ✨ 移除了 .header 和 .pageTitle */
-
-/* ==================== 内容区 ==================== */
 .content {
   padding: var(--spacing-lg);
   padding-top: var(--spacing-xl);
@@ -91,24 +88,17 @@
   border-radius: var(--radius-lg);
   cursor: pointer;
   overflow: hidden;
-  
-  /* 动态渐变背景 */
   background: var(--gradient-accent-animated);
   background-size: 400% 400%;
   animation: gradientWave 8s ease-in-out infinite;
   box-shadow: var(--shadow-accent);
-  
   transition: transform var(--transition-fast), box-shadow var(--transition-normal);
 }
 
-/* ✨ 边缘羽化高光层 */
 .dateCard::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: radial-gradient(
     ellipse at center,
     transparent 50%,
@@ -118,7 +108,6 @@
   z-index: 1;
 }
 
-/* 动态光斑层 - 调淡 */
 .dateCard::after {
   content: '';
   position: absolute;
@@ -144,7 +133,6 @@
   box-shadow: var(--shadow-accent-hover);
 }
 
-/* 确保内容在最上层 */
 .dateCardContent {
   position: relative;
   z-index: 2;
@@ -189,19 +177,15 @@
   padding: var(--spacing-lg);
   cursor: pointer;
   overflow: hidden;
-  
-  /* ✨ 毛玻璃效果 */
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur) saturate(180%);
   -webkit-backdrop-filter: var(--glass-blur) saturate(180%);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  
   transition: transform var(--transition-fast), box-shadow var(--transition-normal);
 }
 
-/* ✨ 噪点纹理层 */
 .card::before {
   content: '';
   position: absolute;
@@ -213,7 +197,6 @@
   border-radius: inherit;
 }
 
-/* ✨ 确保内容在噪点层之上 */
 .card > * {
   position: relative;
   z-index: 1;
@@ -238,50 +221,11 @@
   letter-spacing: -0.01em;
 }
 
-.expandIcon {
-  font-size: 10px;
-  color: var(--color-text-tertiary);
-  transition: transform var(--transition-normal);
-}
-
 .emptyHint {
   font-size: var(--font-sm);
   color: var(--color-text-tertiary);
   text-align: center;
   padding: var(--spacing-lg);
-}
-
-/* ==================== 计划信息 ==================== */
-.planInfo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.planName {
-  font-size: var(--font-lg);
-  font-weight: var(--weight-semibold);
-  color: var(--color-text-primary);
-  letter-spacing: -0.01em;
-}
-
-.planProgressBar {
-  height: 6px;
-  background: var(--color-divider);
-  border-radius: var(--radius-full);
-  overflow: hidden;
-}
-
-.planProgressFill {
-  height: 100%;
-  background: var(--gradient-accent);
-  border-radius: var(--radius-full);
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.planProgressText {
-  font-size: var(--font-sm);
-  color: var(--color-text-secondary);
 }
 
 /* ==================== 身体状态 ==================== */
@@ -298,6 +242,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-xs);
+  min-width: 0;
 }
 
 .bodyStatValue {
@@ -346,6 +291,39 @@
 
 .negative {
   color: var(--color-danger) !important;
+}
+
+/* ==================== 计划信息 ==================== */
+.planInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.planName {
+  font-size: var(--font-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.planProgressBar {
+  height: 6px;
+  background: var(--color-divider);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.planProgressFill {
+  height: 100%;
+  background: var(--gradient-accent);
+  border-radius: var(--radius-full);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.planProgressText {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
 }
 
 /* ==================== 进度条 ==================== */
@@ -449,7 +427,6 @@
   stroke-dasharray: 3, 3;
 }
 
-/* 折线样式 */
 .lineWeight {
   stroke: #3b82f6;
   stroke-width: 0.6;
@@ -471,7 +448,6 @@
   stroke-linejoin: round;
 }
 
-/* 数据点样式 */
 .dotWeight {
   fill: #3b82f6;
 }
@@ -484,7 +460,6 @@
   fill: #8b5cf6;
 }
 
-/* X轴标签 */
 .chartXAxis {
   display: flex;
   justify-content: space-between;
@@ -498,7 +473,6 @@
   flex: 1;
 }
 
-/* 图例 - 毛玻璃效果 */
 .chartLegend {
   display: flex;
   justify-content: space-around;
@@ -547,7 +521,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* 趋势指示 */
 .trendUp {
   color: var(--color-danger);
   font-size: 10px;
@@ -592,7 +565,6 @@
   color: var(--color-text-tertiary);
 }
 
-/* ==================== 占位兼容 ==================== */
 .placeholder {
   display: flex;
   flex-direction: column;
