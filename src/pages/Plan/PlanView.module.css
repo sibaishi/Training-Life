@@ -144,6 +144,7 @@
 /* ==================== 通用卡片 - 毛玻璃 ==================== */
 .card {
   position: relative;
+  z-index: 1;
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
   overflow: hidden;
@@ -173,6 +174,7 @@
 
 .emptyCard {
   position: relative;
+  z-index: 1;
   padding: var(--spacing-xl);
   margin-bottom: var(--spacing-md);
   text-align: center;
@@ -340,8 +342,10 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ==================== 日期标签切换 - 修复阴影裁切 ==================== */
+/* ==================== 日期标签切换 - 层级修复版 ==================== */
 .dayTabs {
+  position: relative;
+  z-index: 3;
   display: flex;
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
@@ -376,6 +380,8 @@
 }
 
 .dayTabActive {
+  position: relative;
+  z-index: 4;
   color: white;
   background: var(--gradient-accent);
   border-color: var(--color-accent);
