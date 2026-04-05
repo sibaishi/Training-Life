@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAppState } from '../../contexts/AppContext';
-import { 
-  getTodayString, 
-  getWeekday, 
-  getWeekdayLabel, 
-  formatDisplayDate, 
-  addDays 
+import {
+  getTodayString,
+  getWeekday,
+  getWeekdayLabel,
+  formatDisplayDate,
+  addDays
 } from '../../utils/date';
 import { generateId } from '../../utils/id';
 import {
@@ -23,7 +23,7 @@ export default function CheckinMain() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { state, setState, getPlanForDate } = useAppState();
-  
+
   const [selectedDate, setSelectedDate] = useState(() => {
     const dateParam = searchParams.get('date');
     return dateParam || getTodayString();
@@ -35,7 +35,6 @@ export default function CheckinMain() {
   const [newItemTime, setNewItemTime] = useState('');
   const [newItemDays, setNewItemDays] = useState<Weekday[]>([]);
 
-  // 区域引用
   const progressRef = useRef<HTMLDivElement>(null);
   const waterRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -45,22 +44,19 @@ export default function CheckinMain() {
   const weekday = getWeekday(selectedDate);
   const isToday = selectedDate === today;
 
-  // ========== 关键修改：根据日期获取对应的计划 ==========
   const selectedPlan = getPlanForDate(selectedDate);
   const isTrainingDay = selectedPlan?.trainingDays.includes(weekday) || false;
   const isWorkday = selectedPlan?.workdays.includes(weekday) || false;
 
-  // ========== 判断是否可编辑（今天和过去可以，未来不行） ==========
   const isEditable = selectedDate <= today;
   const isFutureDate = selectedDate > today;
 
-  // 处理锚点滚动
   useEffect(() => {
     const section = searchParams.get('section');
     if (section) {
       const scrollToSection = () => {
         let targetRef: React.RefObject<HTMLDivElement> | null = null;
-        
+
         switch (section) {
           case 'progress':
             targetRef = progressRef;
@@ -103,10 +99,8 @@ export default function CheckinMain() {
   const dayCheckin = getDayCheckin();
 
   const updateDayCheckin = (updates: Partial<DailyCheckin>) => {
-    // ========== 只允许编辑今天和过去 ==========
     if (!isEditable) return;
 
-    // 确保当天有计划映射
     const newDailyPlanMap = { ...state.dailyPlanMap };
     if (!newDailyPlanMap[selectedDate] && selectedPlan) {
       newDailyPlanMap[selectedDate] = selectedPlan.id;
@@ -163,39 +157,65 @@ export default function CheckinMain() {
 
   const updateFixedItem = (field: 'weight' | 'bodyFat' | 'sleepHours', value: number | undefined) => {
     if (!isEditable) return;
-    
-    // 数值校验
+
     if (value !== undefined) {
       if (field === 'sleepHours') {
-        // 睡眠时长：0-24小时
         value = Math.max(0, Math.min(24, value));
       } else if (field === 'weight') {
-        // 体重：0-500kg
         value = Math.max(0, Math.min(500, value));
       } else if (field === 'bodyFat') {
-        // 体脂率：0-100%
         value = Math.max(0, Math.min(100, value));
       }
     }
+
     updateDayCheckin({ [field]: value });
   };
 
-  // 计算睡眠进度条颜色
-  const getSleepProgressColor = (hours: number | undefined): string => {
-    if (hours === undefined) return 'var(--color-border)';
-    
-    if (hours < 4) return '#ef4444';      // 红色
-    if (hours < 5) return '#f97316';      // 橙色
-    if (hours < 6) return '#f59e0b';      // 琥珀色
-    if (hours < 7) return '#eab308';      // 黄色
-    if (hours < 7.5) return '#84cc16';    // 青柠色
-    return '#22c55e';                      // 绿色
+  const getSleepProgressColor = (hours: number): string => {
+    if (hours < 4) return '#ef4444';
+    if (hours < 5) return '#f97316';
+    if (hours < 6) return '#f59e0b';
+    if (hours < 7) return '#eab308';
+    if (hours < 7.5) return '#84cc16';
+    return '#22c55e';
   };
+
+  /* ==================== 默认展示值逻辑 ==================== */
+  const getLatestRecordedValue = (field: 'weight' | 'bodyFat') => {
+    const dates = Object.keys(state.checkins).sort().reverse();
+    for (const date of dates) {
+      const checkin = state.checkins[date];
+      if (checkin[field] !== undefined) {
+        return checkin[field] as number;
+      }
+    }
+    return undefined;
+  };
+
+  const displayDefaults = useMemo(() => {
+    const actualWeight = dayCheckin.weight;
+    const actualBodyFat = dayCheckin.bodyFat;
+    const actualSleep = dayCheckin.sleepHours;
+
+    const fallbackWeight = getLatestRecordedValue('weight') ?? state.profile.baselineWeight;
+    const fallbackBodyFat = getLatestRecordedValue('bodyFat') ?? state.profile.baselineBodyFat;
+    const fallbackSleep = 0;
+
+    return {
+      weightDisplay: actualWeight ?? fallbackWeight,
+      weightIsDefault: actualWeight === undefined && fallbackWeight !== undefined,
+
+      bodyFatDisplay: actualBodyFat ?? fallbackBodyFat,
+      bodyFatIsDefault: actualBodyFat === undefined && fallbackBodyFat !== undefined,
+
+      sleepDisplay: actualSleep ?? fallbackSleep,
+      sleepIsDefault: actualSleep === undefined,
+    };
+  }, [dayCheckin.weight, dayCheckin.bodyFat, dayCheckin.sleepHours, state.checkins, state.profile.baselineWeight, state.profile.baselineBodyFat]);
 
   const generateAutoItems = () => {
     const items: { id: string; name: string; type: 'training' | 'meal'; time?: string; }[] = [];
-    
-    // ========== 使用 selectedPlan 而不是 currentPlan ==========
+
     if (!selectedPlan) return items;
 
     const schedule = isWorkday ? selectedPlan.schedule.workday : selectedPlan.schedule.weekend;
@@ -283,19 +303,19 @@ export default function CheckinMain() {
 
   const toggleItemStatus = (itemId: string, itemName: string, isCustom: boolean) => {
     if (!isEditable) return;
-    
+
     const currentStatus = getItemStatus(itemId);
     const newStatus = currentStatus === 'pending' ? 'completed' : 'pending';
-    
+
     const existingIndex = dayCheckin.checklistItems.findIndex(r => r.id === itemId);
-    let newItems = [...dayCheckin.checklistItems];
-    
+    const newItems = [...dayCheckin.checklistItems];
+
     if (existingIndex >= 0) {
       newItems[existingIndex] = { ...newItems[existingIndex], status: newStatus };
     } else {
       newItems.push({ id: itemId, name: itemName, isCustom, status: newStatus });
     }
-    
+
     updateDayCheckin({ checklistItems: newItems });
   };
 
@@ -314,7 +334,7 @@ export default function CheckinMain() {
     const allProgressItems = [...fixedItems, ...autoItemsStatus];
     const completed = allProgressItems.filter(item => item.done).length;
     const total = allProgressItems.length;
-    
+
     return total > 0 ? Math.round((completed / total) * 100) : 0;
   };
 
@@ -361,7 +381,6 @@ export default function CheckinMain() {
 
   const WEEKDAYS: Weekday[] = [1, 2, 3, 4, 5, 6, 0];
 
-  // 获取显示的计划名称
   const currentPlan = state.plans.find(p => p.id === state.currentPlanId);
   const showPlanName = selectedPlan?.name || '未知计划';
   const isHistoricalPlan = selectedPlan && currentPlan && selectedPlan.id !== currentPlan.id;
@@ -371,7 +390,7 @@ export default function CheckinMain() {
       <div className={styles.header}>
         <div className={styles.dateNav}>
           <button className={styles.dateNavBtn} onClick={handlePrevDay}>‹</button>
-          <div 
+          <div
             className={styles.dateCenter}
             onClick={() => navigate('/checkin/calendar')}
           >
@@ -384,7 +403,6 @@ export default function CheckinMain() {
           <button className={styles.dateNavBtn} onClick={handleNextDay}>›</button>
         </div>
 
-        {/* 显示计划名称 */}
         <div className={styles.planInfo}>
           <span className={styles.planName}>{showPlanName}</span>
           {isHistoricalPlan && (
@@ -407,7 +425,6 @@ export default function CheckinMain() {
           </button>
         )}
 
-        {/* 未来日期提示 */}
         {isFutureDate && (
           <div className={styles.futureHint}>
             📅 这是未来的日期，暂时无法打卡
@@ -425,8 +442,8 @@ export default function CheckinMain() {
             <span className={styles.progressValue}>{progress}%</span>
           </div>
           <div className={styles.progressBar}>
-            <div 
-              className={styles.progressFill} 
+            <div
+              className={styles.progressFill}
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -441,36 +458,24 @@ export default function CheckinMain() {
             </span>
           </div>
           <div className={styles.waterProgressBar}>
-            <div 
-              className={styles.waterProgressFill} 
+            <div
+              className={styles.waterProgressFill}
               style={{ width: `${waterProgress}%` }}
             />
           </div>
           {isEditable && (
             <>
               <div className={styles.waterActions}>
-                <button 
-                  className={styles.waterQuickBtn}
-                  onClick={() => handleQuickAddWater(200)}
-                >
+                <button className={styles.waterQuickBtn} onClick={() => handleQuickAddWater(200)}>
                   +200ml
                 </button>
-                <button 
-                  className={styles.waterQuickBtn}
-                  onClick={() => handleQuickAddWater(300)}
-                >
+                <button className={styles.waterQuickBtn} onClick={() => handleQuickAddWater(300)}>
                   +300ml
                 </button>
-                <button 
-                  className={styles.waterQuickBtn}
-                  onClick={() => handleQuickAddWater(500)}
-                >
+                <button className={styles.waterQuickBtn} onClick={() => handleQuickAddWater(500)}>
                   +500ml
                 </button>
-                <button 
-                  className={styles.waterCustomBtn}
-                  onClick={() => setShowWaterInput(!showWaterInput)}
-                >
+                <button className={styles.waterCustomBtn} onClick={() => setShowWaterInput(!showWaterInput)}>
                   自定义
                 </button>
               </div>
@@ -495,6 +500,7 @@ export default function CheckinMain() {
         {/* 身体数据卡 */}
         <div ref={bodyRef} className={styles.card}>
           <div className={styles.cardTitle}>📊 身体数据</div>
+
           <div className={styles.fixedItemsGrid}>
             <div className={styles.fixedItem}>
               <span className={styles.fixedItemLabel}>体重 (kg)</span>
@@ -503,8 +509,8 @@ export default function CheckinMain() {
                 step="0.1"
                 min="0"
                 max="500"
-                className={styles.fixedItemInput}
-                value={dayCheckin.weight ?? ''}
+                className={`${styles.fixedItemInput} ${displayDefaults.weightIsDefault ? styles.defaultValue : ''}`}
+                value={dayCheckin.weight !== undefined ? dayCheckin.weight : (displayDefaults.weightDisplay ?? '')}
                 onChange={(e) => {
                   const val = e.target.value;
                   if (val === '') {
@@ -517,6 +523,7 @@ export default function CheckinMain() {
                 disabled={!isEditable}
               />
             </div>
+
             <div className={styles.fixedItem}>
               <span className={styles.fixedItemLabel}>体脂率 (%)</span>
               <input
@@ -524,8 +531,8 @@ export default function CheckinMain() {
                 step="0.1"
                 min="0"
                 max="100"
-                className={styles.fixedItemInput}
-                value={dayCheckin.bodyFat ?? ''}
+                className={`${styles.fixedItemInput} ${displayDefaults.bodyFatIsDefault ? styles.defaultValue : ''}`}
+                value={dayCheckin.bodyFat !== undefined ? dayCheckin.bodyFat : (displayDefaults.bodyFatDisplay ?? '')}
                 onChange={(e) => {
                   const val = e.target.value;
                   if (val === '') {
@@ -539,16 +546,30 @@ export default function CheckinMain() {
               />
             </div>
           </div>
+
           <div className={styles.sleepItem}>
             <span className={styles.fixedItemLabel}>😴 睡眠时长 (小时)</span>
-            <div className={styles.sleepRow}>
+
+            {/* 进度条在上 */}
+            <div className={styles.sleepProgressBar}>
+              <div
+                className={styles.sleepProgressFill}
+                style={{
+                  width: `${Math.min((displayDefaults.sleepDisplay / 7.5) * 100, 100)}%`,
+                  background: getSleepProgressColor(displayDefaults.sleepDisplay),
+                }}
+              />
+            </div>
+
+            {/* 输入框左下，目标右下 */}
+            <div className={styles.sleepMetaRow}>
               <input
                 type="number"
                 step="0.5"
                 min="0"
                 max="24"
-                className={styles.sleepInput}
-                value={dayCheckin.sleepHours ?? ''}
+                className={`${styles.sleepInput} ${displayDefaults.sleepIsDefault ? styles.defaultValue : ''}`}
+                value={dayCheckin.sleepHours !== undefined ? dayCheckin.sleepHours : displayDefaults.sleepDisplay}
                 onChange={(e) => {
                   const val = e.target.value;
                   if (val === '') {
@@ -557,22 +578,11 @@ export default function CheckinMain() {
                     updateFixedItem('sleepHours', parseFloat(val));
                   }
                 }}
-                placeholder="--"
+                placeholder="0"
                 disabled={!isEditable}
               />
               <span className={styles.sleepTarget}>目标：7.5 小时</span>
             </div>
-            {dayCheckin.sleepHours !== undefined && (
-              <div className={styles.sleepProgressBar}>
-                <div 
-                  className={styles.sleepProgressFill}
-                  style={{ 
-                    width: `${Math.min((dayCheckin.sleepHours / 7.5) * 100, 100)}%`,
-                    background: getSleepProgressColor(dayCheckin.sleepHours),
-                  }}
-                />
-              </div>
-            )}
           </div>
         </div>
 
@@ -580,14 +590,14 @@ export default function CheckinMain() {
         <div ref={checklistRef} className={styles.card}>
           <div className={styles.cardHeader}>
             <span className={styles.cardTitle}>📝 执行清单</span>
-            <button 
+            <button
               className={styles.addCustomBtn}
               onClick={() => setShowCustomItemModal(true)}
             >
               + 自定义
             </button>
           </div>
-          
+
           {allItems.length === 0 ? (
             <div className={styles.emptyHint}>
               {selectedPlan ? '今天没有待办事项' : '没有对应的计划'}
@@ -598,8 +608,8 @@ export default function CheckinMain() {
                 const status = getItemStatus(item.id);
                 const isCompleted = status === 'completed';
                 return (
-                  <div 
-                    key={item.id} 
+                  <div
+                    key={item.id}
                     className={`${styles.checklistItem} ${isCompleted ? styles.checklistItemDone : ''} ${!isEditable ? styles.checklistItemDisabled : ''}`}
                     onClick={() => toggleItemStatus(item.id, item.name, item.isCustom)}
                     style={{ cursor: isEditable ? 'pointer' : 'default' }}
@@ -630,7 +640,7 @@ export default function CheckinMain() {
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHeader}>
               <span className={styles.modalTitle}>添加自定义事项</span>
-              <button 
+              <button
                 className={styles.modalCloseBtn}
                 onClick={() => setShowCustomItemModal(false)}
               >
@@ -673,13 +683,13 @@ export default function CheckinMain() {
               </div>
             </div>
             <div className={styles.modalFooter}>
-              <button 
+              <button
                 className={styles.modalCancelBtn}
                 onClick={() => setShowCustomItemModal(false)}
               >
                 取消
               </button>
-              <button 
+              <button
                 className={styles.modalConfirmBtn}
                 onClick={handleAddCustomItem}
               >
